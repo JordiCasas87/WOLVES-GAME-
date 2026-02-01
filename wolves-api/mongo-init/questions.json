@@ -1,0 +1,483 @@
+[
+  {
+    "intro": "Veamos qué sabes, pequeño animalillo…",
+    "text": "¿Qué es una clase abstracta?",
+    "answers": [
+      "Una clase que reemplaza a las interfaces",
+      "Una clase que no puede instanciarse y sirve como base para otras clases",
+      "Una clase que solo contiene métodos estáticos",
+      "Una clase que no puede tener atributos"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "No estoy muy impresionado contigo de momento. A ver si esto mejora.",
+    "text": "¿Qué es una clase inmutable?",
+    "answers": [
+      "Una clase que no puede heredarse",
+      "Una clase cuyos objetos no pueden modificarse después de crearse",
+      "Una clase que no puede instanciarse",
+      "Una clase que solo tiene métodos estáticos"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Antes de que me duerma… responde rápido a esto.",
+    "text": "¿Qué es una interfaz en Java?",
+    "answers": [
+      "Un objeto que conecta dos clases",
+      "Una clase que no puede heredarse",
+      "Un tipo que define métodos que deben ser implementados por otras clases",
+      "Una clase que contiene solo métodos estáticos"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esto es fácil… incluso para ti.",
+    "text": "¿Se puede implementar un método en una interfaz?",
+    "answers": [
+      "Solo en clases finales",
+      "Sí, mediante métodos default desde Java 8",
+      "No, nunca es posible",
+      "Solo si la interfaz es abstracta"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Intenta no fallar, me da pereza rellenar informes.",
+    "text": "¿Qué es un método default?",
+    "answers": [
+      "Un método generado automáticamente por el compilador",
+      "Un método que no puede sobrescribirse",
+      "Un método de una interfaz con implementación por defecto",
+      "Un método exclusivo de clases abstractas"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "He visto cachorros hacerlo mejor. Sorpréndeme.",
+    "text": "¿Qué es la sobrescritura de métodos?",
+    "answers": [
+      "Cuando se oculta un atributo de la clase padre",
+      "Cuando una subclase redefine un método heredado",
+      "Cuando un método tiene varios parámetros distintos",
+      "Cuando se llama a un método estático"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "No te preocupes si fallas esta pregunta, creo que ya estabas fuera.",
+    "text": "¿Se pueden sobrescribir los constructores?",
+    "answers": [
+      "Sí, si la clase es abstracta",
+      "No, los constructores no se pueden sobrescribir",
+      "Solo si son públicos",
+      "Sí, usando la anotación @Override"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Respira hondo. Es tu última oportunidad… bueno, quizá no.",
+    "text": "¿Se pueden sobrescribir métodos estáticos?",
+    "answers": [
+      "Solo si son privados",
+      "Sí, igual que los métodos normales",
+      "No, los métodos estáticos solo se ocultan",
+      "Solo en clases finales"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Concéntrate. No todos llegan a esta parte.",
+    "text": "¿Qué es un constructor por defecto?",
+    "answers": [
+      "Un constructor heredado de la clase padre",
+      "Un constructor privado",
+      "Un constructor sin parámetros creado automáticamente si no se define otro",
+      "Un constructor con valores por defecto"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Me pagan más a mí por no hacer nada que a ti si te contratan. Ha. Ha. Ha.",
+    "text": "¿Qué es la sobrecarga de métodos?",
+    "answers": [
+      "Eliminar un método de la clase padre",
+      "Reescribir un método heredado",
+      "Ocultar un método estático",
+      "Tener varios métodos con el mismo nombre pero distintos parámetros"
+    ],
+    "correctAnswerIndex": 3,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Impresióname. O no. Total, da igual.",
+    "text": "¿En qué consiste el patrón Singleton?",
+    "answers": [
+      "Centraliza la creación de objetos",
+      "Garantiza que una clase tenga una única instancia",
+      "Permite crear múltiples instancias de una clase",
+      "Define una jerarquía de clases"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Si fallas, fingiré que nunca estuviste aquí.",
+    "text": "¿Qué es el patrón Factory?",
+    "answers": [
+      "Un patrón exclusivo de Spring",
+      "Un patrón que garantiza una única instancia",
+      "Un patrón que centraliza la creación de objetos",
+      "Un patrón para herencia múltiple"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Antes de la pregunta… ¿te importa si te como? Es broma. Creo.",
+    "text": "¿Permite Java la herencia múltiple?",
+    "answers": [
+      "Sí, sin ninguna restricción",
+      "Solo en clases abstractas",
+      "No entre clases, pero sí mediante interfaces",
+      "Solo usando clases finales"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esto debería dolerte un poco.",
+    "text": "¿Qué es la composición en Java?",
+    "answers": [
+      "Una forma de herencia múltiple",
+      "Una relación donde una clase contiene objetos de otra clase",
+      "Una interfaz con implementación",
+      "Un tipo de método estático"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "No esperaba mucho… pero aún puedes decepcionarme.",
+    "text": "¿Cuáles son los modificadores de acceso en Java?",
+    "answers": [
+      "public, static y void",
+      "static, final y abstract",
+      "protected, final y transient",
+      "private, default, protected y public"
+    ],
+    "correctAnswerIndex": 3,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "¿Eres tan aburrido como pareces? En fin, contesta esto.",
+    "text": "¿Qué es una clase interna?",
+    "answers": [
+      "Una clase definida dentro de otra clase",
+      "Una clase definida dentro de un método",
+      "Una clase sin nombre",
+      "Una clase abstracta"
+    ],
+    "correctAnswerIndex": 0,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "No cierres los ojos ahora.",
+    "text": "¿Qué es una clase local?",
+    "answers": [
+      "Una clase sin nombre",
+      "Una clase definida dentro de un método o bloque",
+      "Una clase abstracta",
+      "Una clase definida dentro de otra clase"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Esto empieza a ponerse divertido.",
+    "text": "¿Qué es una clase anónima?",
+    "answers": [
+      "Una clase que no puede instanciarse",
+      "Una clase sin nombre usada para una implementación puntual",
+      "Una clase con métodos abstractos",
+      "Una clase definida en otro paquete"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Si lo haces muy mal, te pagaremos menos. Contesta.",
+    "text": "¿Qué es la inyección de dependencias?",
+    "answers": [
+      "Crear objetos usando new",
+      "Extender una clase base",
+      "Proporcionar dependencias a una clase en lugar de crearlas internamente",
+      "Ocultar dependencias con modificadores de acceso"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Esto no es personal. Bueno, quizá sí.",
+    "text": "¿Qué es el framework Spring?",
+    "answers": [
+      "Un servidor de aplicaciones",
+      "Un framework de Java para crear aplicaciones empresariales y web",
+      "Un lenguaje de programación",
+      "Una base de datos"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Vamos terminando. No me hagas perder más tiempo.",
+    "text": "¿Para qué se usa la palabra clave transient?",
+    "answers": [
+      "Para evitar que un atributo se serialice",
+      "Para hacer un atributo privado",
+      "Para inicializar un atributo automáticamente",
+      "Para hacer un atributo inmutable"
+    ],
+    "correctAnswerIndex": 0,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Última. Y luego hablamos de tu futuro.",
+    "text": "¿Cómo se comparan correctamente dos Strings en Java?",
+    "answers": [
+      "Usando el operador ==",
+      "Usando compareTo() siempre",
+      "Usando el método equals()",
+      "Usando el operador =="
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Veamos si sabes algo de esto o solo ladras mucho.",
+    "text": "¿Para qué se utiliza el método hashCode()?",
+    "answers": [
+      "Para ordenar colecciones",
+      "Para identificar objetos en estructuras como HashMap",
+      "Para convertir objetos en texto",
+      "Para comparar objetos por referencia"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "No falles esta… suele doler cuando lo haces.",
+    "text": "¿Para qué sirve el método equals()?",
+    "answers": [
+      "Para clonar objetos",
+      "Para comparar direcciones de memoria",
+      "Para comprobar si dos objetos son iguales lógicamente",
+      "Para ordenar colecciones"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esta pregunta separa a los cachorros de los lobos.",
+    "text": "¿Qué relación existe entre equals() y hashCode()?",
+    "answers": [
+      "hashCode siempre devuelve valores únicos",
+      "equals solo funciona con Strings",
+      "Si dos objetos son iguales, deben tener el mismo hashCode",
+      "hashCode sustituye a equals"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Concéntrate… no quiero repetirla.",
+    "text": "¿Cuál es la diferencia entre List, Set y Map?",
+    "answers": [
+      "Map es una implementación de List",
+      "List permite duplicados, Set no, y Map usa pares clave-valor",
+      "Set permite duplicados y List no",
+      "Todas almacenan datos de la misma forma"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esto es básico. O debería serlo.",
+    "text": "¿Cuál es la diferencia principal entre ArrayList y LinkedList?",
+    "answers": [
+      "LinkedList no implementa List",
+      "ArrayList usa arrays y LinkedList una lista enlazada",
+      "ArrayList no permite duplicados",
+      "LinkedList es más rápida para acceder por índice"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "No te duermas ahora.",
+    "text": "¿Qué es un Map en Java?",
+    "answers": [
+      "Un conjunto sin duplicados",
+      "Una clase concreta de Java",
+      "Una colección de pares clave-valor",
+      "Una lista ordenada"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esta suele confundirse… no me decepciones.",
+    "text": "¿Para qué se usa la palabra clave final?",
+    "answers": [
+      "Para manejar excepciones",
+      "Para impedir cambios en variables, métodos o clases",
+      "Para sincronizar hilos",
+      "Para crear constantes globales"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Aquí empiezan los problemas de verdad.",
+    "text": "¿Qué es una excepción en Java?",
+    "answers": [
+      "Un fallo de compilación",
+      "Un problema de hardware",
+      "Un error que interrumpe el flujo normal del programa",
+      "Un tipo especial de variable"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Respira hondo antes de contestar.",
+    "text": "¿Cuál es la diferencia entre Exception y RuntimeException?",
+    "answers": [
+      "RuntimeException es un Error",
+      "RuntimeException no requiere ser capturada obligatoriamente",
+      "No hay ninguna diferencia",
+      "Exception no puede heredarse"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Si dices que sí, mientes.",
+    "text": "¿Es obligatorio capturar una RuntimeException?",
+    "answers": [
+      "Solo en métodos públicos",
+      "Sí, siempre",
+      "No, no es obligatorio",
+      "Solo en Spring"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Esto ya no tiene arreglo si lo fallas.",
+    "text": "¿Qué es un Error en Java?",
+    "answers": [
+      "Una excepción que siempre debe capturarse",
+      "Un warning del compilador",
+      "Un problema grave fuera del control de la aplicación",
+      "Un fallo lógico del programador"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Ahora vamos a ver si sabes reutilizar cosas.",
+    "text": "¿Qué son los genéricos en Java?",
+    "answers": [
+      "Evitan el uso de interfaces",
+      "Permiten trabajar con distintos tipos usando una misma clase o método",
+      "Sirven para mejorar el rendimiento",
+      "Son colecciones especiales"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Esta suele aparecer cuando algo va muy mal.",
+    "text": "¿Qué es un StackOverflow?",
+    "answers": [
+      "Un problema de memoria del heap",
+      "Un error causado por exceso de llamadas en la pila",
+      "Un error de compilación",
+      "Un tipo de excepción controlada"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "No, no es magia.",
+    "text": "¿Para qué sirve el Garbage Collector?",
+    "answers": [
+      "Para eliminar variables locales",
+      "Para liberar memoria de objetos que ya no se usan",
+      "Para ordenar la memoria",
+      "Para optimizar el código"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Más vale que esto te suene.",
+    "text": "¿Qué es un hilo (thread)?",
+    "answers": [
+      "Un proceso independiente",
+      "Un método sincronizado",
+      "Una unidad de ejecución dentro de un programa",
+      "Un bloque de memoria"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  },
+  {
+    "intro": "Aquí es donde todo se rompe si no sabes lo que haces.",
+    "text": "¿Para qué se usa la palabra clave synchronized?",
+    "answers": [
+      "Para crear hilos",
+      "Para evitar accesos concurrentes a una sección de código",
+      "Para acelerar la ejecución",
+      "Para manejar excepciones"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Cambia de tema, ahora base de datos.",
+    "text": "¿Qué es una transacción en una base de datos?",
+    "answers": [
+      "Una consulta SQL",
+      "Un conjunto de operaciones que se ejecutan como una sola unidad",
+      "Un índice",
+      "Un trigger automático"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "MEDIUM"
+  },
+  {
+    "intro": "Última de este bloque. No la líes.",
+    "text": "¿Para qué se utilizan los índices en una base de datos?",
+    "answers": [
+      "Para asegurar la integridad",
+      "Para ejecutar transacciones",
+      "Para mejorar la velocidad de las búsquedas",
+      "Para almacenar datos duplicados"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "EASY"
+  }
+]
+
