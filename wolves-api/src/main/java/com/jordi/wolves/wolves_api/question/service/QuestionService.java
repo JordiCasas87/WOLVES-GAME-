@@ -35,13 +35,12 @@ public class QuestionService {
                 .toList();
     }
 
-    public List<QuestionDtoResponse> getRandomQuestionsByDifficulty(Difficulty difficulty) {
+
+    public List<Question> getRandomQuestionEntitiesByDifficulty(Difficulty difficulty) {
         List<Question> questions = questionRepository.findByDifficulty(difficulty);
         Collections.shuffle(questions);
-
         return questions.stream()
                 .limit(QUESTIONS_PER_GAME)
-                .map(questionMapper::toDto)
                 .toList();
     }
 

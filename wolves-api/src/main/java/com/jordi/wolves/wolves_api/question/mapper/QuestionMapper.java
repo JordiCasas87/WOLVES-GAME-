@@ -15,4 +15,14 @@ public class QuestionMapper {
                 question.getAnswers()
         );
     }
+
+    public Question toEntity(QuestionDtoResponse questionDtoResponse) {
+
+        return  new Question(null, questionDtoResponse.intro(),
+                questionDtoResponse.text(),
+                questionDtoResponse.answers(),
+                -1,
+                null);
+    }
+
 }

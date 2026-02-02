@@ -22,7 +22,13 @@ public class Question {
 
     private Difficulty difficulty;
 
-    public Question(String id,String intro, String text, List<String> answers, int correctAnswerIndex, Difficulty difficulty) {
+    public Question(String id,
+                    String intro,
+                    String text,
+                    List<String> answers,
+                    int correctAnswerIndex,
+                    Difficulty difficulty) {
+
         this.id = id;
         this.intro = intro;
         this.text = text;
