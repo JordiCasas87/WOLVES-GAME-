@@ -12,6 +12,10 @@ import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
 import com.jordi.wolves.wolves_api.game.mapper.GameMapper;
 import com.jordi.wolves.wolves_api.game.model.Game;
 import com.jordi.wolves.wolves_api.game.repository.GameRepository;
+import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
+import com.jordi.wolves.wolves_api.player.model.Player;
+import com.jordi.wolves.wolves_api.player.repository.PlayerRepository;
+import com.jordi.wolves.wolves_api.player.service.PlayerService;
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoNextResponse;
 import com.jordi.wolves.wolves_api.question.enums.Difficulty;
 import com.jordi.wolves.wolves_api.question.mapper.QuestionMapper;
@@ -26,22 +30,26 @@ import java.util.Random;
 @Service
 public class GameService {
 
-    GameRepository gameRepo;
-    QuestionService questionService;
-    QuestionMapper questionMapper;
-    GameMapper gameMapper;
+    private GameRepository gameRepo;
+    private QuestionService questionService;
+    private QuestionMapper questionMapper;
+    private GameMapper gameMapper;
+    private PlayerService playerService;
 
     private static final List<Integer> REWARDS = List.of(1500, 2500, 5000); //lista de premios para crear partida
 
     public GameService(GameRepository gameRepo,
                        QuestionService questionService,
                        QuestionMapper questionMapper,
-                       GameMapper gameMapper) {
+                       GameMapper gameMapper,
+                       PlayerRepository playerRepo,
+                       PlayerService playerService) {
 
         this.gameRepo = gameRepo;
         this.questionService = questionService;
         this.questionMapper = questionMapper;
         this.gameMapper = gameMapper;
+        this.playerService = playerService;
     }
 
     public GameDtoResponse createGame(String playerId, Difficulty difficulty) {
@@ -107,7 +115,7 @@ public class GameService {
                 answeredQuestion.getCorrectAnswerIndex() == dtoRequest.selectedAnswer();
 
 
-        updateGameAfterAnswer(gameFinded, correct);
+        updateGameAfterAnswer(gameFinded, answeredQuestion, correct);
 
         return buildResponse(correct);
 
@@ -158,18 +166,30 @@ public class GameService {
     }
 
 
-    private void updateGameAfterAnswer(Game game, boolean correct) {
+    private void updateGameAfterAnswer(Game game, Question question, boolean correct) {
 
         if (correct) {
             game.setScore(game.getScore() + 1);
-        }
+
+        } else {
+            registerIncorrectQuestion(game, question);
+        } // guardar respuestas erroneas para modo juego solo con preguntas falladas
+
         // para terminar partida cuando llega a 10
         if (game.getCurrentQuestionIndex() == game.getQuestions().size()) {
             game.setStatus(GameStatus.FINISHED);
+            finishGame(game); //actualizamos player
         }
 
         gameRepo.save(game);
     }
+
+    private void registerIncorrectQuestion(Game game, Question question) {
+        //refactorizado para llamar a player service
+        Player player = playerService.loadPlayer(game.getPlayerId());
+        playerService.registerIncorrectQuestion(player, question.getId());
+    }
+
 
     private AnswerResponseDto buildResponse(boolean correct) {
         if (correct) {
@@ -186,15 +206,14 @@ public class GameService {
         }
     }
 
+    private void finishGame(Game game) {
+
+        Player player = playerService.loadPlayer(game.getPlayerId());
+        boolean passed = game.getScore() >= 6;
+        playerService.applyGameResult(player, game.getReward(), passed);
+
+    }
+
 }
-
-
-
-/*
-
-GameResultDto getResult(String gameId);
- */
-
-
 
 

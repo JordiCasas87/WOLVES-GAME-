@@ -16,6 +16,7 @@ public class Player {
     private int age;
     private LocalDate dateOfCreation;
     private int level;
+    private int gamesPlayed;
     private int money;
     private List<String> incorrectQuestionsIdList;
 
@@ -25,8 +26,21 @@ public class Player {
         this.age = age;
         this.dateOfCreation = LocalDate.now();
         this.level = 0;
+        this.gamesPlayed =0;
         this.money = 0;
         this.incorrectQuestionsIdList = new ArrayList<>();
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
+    public void incrementGamesPlayed () {
+        this.gamesPlayed++;
     }
 
     public Player() {

@@ -14,9 +14,7 @@ public class GameMapper {
                 game.getId(),
                 game.getPlayerId(),
                 game.getDifficulty(),
-                game.getStatus(),
-                game.getCurrentQuestionIndex(),
-                game.getScore()
+                game.getStatus()
         );
     }
 

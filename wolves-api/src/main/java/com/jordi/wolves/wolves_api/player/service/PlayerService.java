@@ -65,6 +65,30 @@ public class PlayerService {
 
     }
 
+    //metodos de player
+
+
+    public Player loadPlayer(String playerId) {
+        return playerRepo.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException("Player not found"));
+    }
+
+    public void registerIncorrectQuestion(Player player, String questionId) {
+        player.getIncorrectQuestionsIdList().add(questionId);
+        playerRepo.save(player);
+    }
+
+    public void applyGameResult(Player player, int reward, boolean passed) {
+        player.incrementGamesPlayed();
+
+        if (passed) {
+            player.incrementLevel();
+            player.incrementMoney(reward);
+        }
+
+        playerRepo.save(player);
+    }
+
     // Se usará cuando exista autenticación JWT
 // public Player getPlayerByUsername(String username) {
 //     return playerRepo.findByUsername(username)
