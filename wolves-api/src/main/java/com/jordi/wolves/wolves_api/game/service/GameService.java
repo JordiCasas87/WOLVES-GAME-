@@ -1,10 +1,10 @@
 package com.jordi.wolves.wolves_api.game.service;
 
-
 import com.jordi.wolves.wolves_api.game.dto.AnswerRequestDto;
 import com.jordi.wolves.wolves_api.game.dto.AnswerResponseDto;
 import com.jordi.wolves.wolves_api.game.dto.GameDtoResponse;
 import com.jordi.wolves.wolves_api.game.enums.GameStatus;
+import com.jordi.wolves.wolves_api.game.exception.GameAlreadyFinishedException;
 import com.jordi.wolves.wolves_api.game.exception.GameLastQuestionException;
 import com.jordi.wolves.wolves_api.game.exception.GameNoQuestionAsked;
 import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
@@ -54,7 +54,16 @@ public class GameService {
 
     public QuestionDtoNextResponse nextQuestion(String gameId) {
         Game gameFinded = gameRepo.findById(gameId)
-                .orElseThrow(()->new GameNotFoundException("Game Not Found!"));
+                .orElseThrow(() -> new GameNotFoundException("Game Not Found!"));
+
+        //cambiar estado aqui?
+        if (gameFinded.getStatus() == GameStatus.CREATED) {
+            gameFinded.setStatus(GameStatus.IN_PROGRESS);
+        }
+        //si esta acabado que no se vuelva a pedir un pregunta mas o dará error
+        if (gameFinded.getStatus() == GameStatus.FINISHED) {
+            throw new GameLastQuestionException("The game is already finished");
+        }
 
         List<Question> gameQuestions = gameFinded.getQuestions();
         int currentIndex = gameFinded.getCurrentQuestionIndex(); //0
@@ -65,11 +74,11 @@ public class GameService {
         }
 
         Question nextQuestion = gameQuestions.get(currentIndex);
-        gameFinded.setCurrentQuestionIndex(currentIndex+1); //1
+        gameFinded.setCurrentQuestionIndex(currentIndex + 1); //1
         gameRepo.save(gameFinded);
 
         return new QuestionDtoNextResponse(
-                currentIndex+1,
+                currentIndex + 1,
                 nextQuestion.getIntro(),
                 nextQuestion.getText(),
                 nextQuestion.getAnswers());
@@ -82,30 +91,51 @@ public class GameService {
         Game gameFinded = gameRepo.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found!"));
 
-        int currentIndex = gameFinded.getCurrentQuestionIndex();
-
-        if (currentIndex == 0) {
-            throw new GameNoQuestionAsked("No question has been asked yet");
+        if (gameFinded.getStatus() == GameStatus.FINISHED) {
+            throw new GameAlreadyFinishedException("The game is already finished");
         }
 
-        int answeredQuestionIndex = currentIndex - 1;
-        Question answeredQuestion = gameFinded.getQuestions().get(answeredQuestionIndex);
+        Question answeredQuestion = getAnsweredQuestion(gameFinded);
 
         boolean correct =
                 answeredQuestion.getCorrectAnswerIndex() == dtoRequest.selectedAnswer();
 
 
+        updateGameAfterAnswer(gameFinded, correct);
+
+        return buildResponse(correct);
+
+    }
+
+
+    //métodos para esta clase.
+
+    private Question getAnsweredQuestion(Game game) {
+
+        int currentIndex = game.getCurrentQuestionIndex();
+
+        if (currentIndex == 0) {
+            throw new GameNoQuestionAsked("No question has been asked yet");
+        }
+
+        return game.getQuestions().get(currentIndex - 1);
+    }
+
+
+    private void updateGameAfterAnswer(Game game, boolean correct) {
+
         if (correct) {
-            gameFinded.setScore(gameFinded.getScore() + 1);
+            game.setScore(game.getScore() + 1);
+        }
+        // para terminar partida cuando llega a 10
+        if (game.getCurrentQuestionIndex() == game.getQuestions().size()) {
+            game.setStatus(GameStatus.FINISHED);
         }
 
-        if (gameFinded.getCurrentQuestionIndex() == gameFinded.getQuestions().size()) {
-            gameFinded.setStatus(GameStatus.FINISHED);
-        }
+        gameRepo.save(game);
+    }
 
-        gameRepo.save(gameFinded);
-
-
+    private AnswerResponseDto buildResponse(boolean correct) {
         if (correct) {
             return new AnswerResponseDto(
                     true,
@@ -116,10 +146,12 @@ public class GameService {
                     false,
                     "Eso no es correcto, estás a un paso de mi sartén"
             );
+
         }
     }
 
-    }
+}
+
 
 
 /*

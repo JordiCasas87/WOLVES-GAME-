@@ -31,7 +31,7 @@ public class GameController {
     @GetMapping("/game/{id}/nextQuestion")
     public ResponseEntity<QuestionDtoNextResponse> nextQuestion (@PathVariable String id){
         QuestionDtoNextResponse questionDtoNextResponse = gameService.nextQuestion(id);
-        return new ResponseEntity<QuestionDtoNextResponse>(questionDtoNextResponse, HttpStatus.CREATED);
+        return new ResponseEntity<QuestionDtoNextResponse>(questionDtoNextResponse, HttpStatus.OK);
     }
 
     @PostMapping("/game/{id}/answer")
