@@ -4,6 +4,7 @@ package com.jordi.wolves.wolves_api.game.controller;
 import com.jordi.wolves.wolves_api.game.dto.AnswerRequestDto;
 import com.jordi.wolves.wolves_api.game.dto.AnswerResponseDto;
 import com.jordi.wolves.wolves_api.game.dto.GameDtoResponse;
+import com.jordi.wolves.wolves_api.game.dto.GameResultDto;
 import com.jordi.wolves.wolves_api.game.service.GameService;
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoNextResponse;
 import com.jordi.wolves.wolves_api.question.enums.Difficulty;
@@ -41,6 +42,10 @@ public class GameController {
         return new ResponseEntity<AnswerResponseDto> ( dtoResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/game/{id}/result")
+    public ResponseEntity<GameResultDto> getResult(@PathVariable String id) {
+        return ResponseEntity.ok(gameService.getResult(id));
+    }
 
 
     //endpoints

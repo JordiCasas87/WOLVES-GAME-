@@ -3,6 +3,7 @@ package com.jordi.wolves.wolves_api.game.service;
 import com.jordi.wolves.wolves_api.game.dto.AnswerRequestDto;
 import com.jordi.wolves.wolves_api.game.dto.AnswerResponseDto;
 import com.jordi.wolves.wolves_api.game.dto.GameDtoResponse;
+import com.jordi.wolves.wolves_api.game.dto.GameResultDto;
 import com.jordi.wolves.wolves_api.game.enums.GameStatus;
 import com.jordi.wolves.wolves_api.game.exception.GameAlreadyFinishedException;
 import com.jordi.wolves.wolves_api.game.exception.GameLastQuestionException;
@@ -20,6 +21,7 @@ import com.jordi.wolves.wolves_api.question.service.QuestionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class GameService {
@@ -28,6 +30,8 @@ public class GameService {
     QuestionService questionService;
     QuestionMapper questionMapper;
     GameMapper gameMapper;
+
+    private static final List<Integer> REWARDS = List.of(1500, 2500, 5000); //lista de premios para crear partida
 
     public GameService(GameRepository gameRepo,
                        QuestionService questionService,
@@ -42,10 +46,12 @@ public class GameService {
 
     public GameDtoResponse createGame(String playerId, Difficulty difficulty) {
 
+        int reward = REWARDS.get(new Random().nextInt(REWARDS.size()));
+
         List<Question> questions =
                 questionService.getRandomQuestionEntitiesByDifficulty(difficulty);
 
-        Game newGame = new Game(playerId, difficulty, questions);
+        Game newGame = new Game(playerId, difficulty, questions, reward);
 
         Game savedGame = gameRepo.save(newGame);
 
@@ -104,6 +110,36 @@ public class GameService {
         updateGameAfterAnswer(gameFinded, correct);
 
         return buildResponse(correct);
+
+    }
+
+    public GameResultDto getResult(String gameId) {
+        String finalMessage;
+
+        Game game = gameRepo.findById(gameId)
+                .orElseThrow(() -> new GameNotFoundException("Game not found"));
+
+        if (game.getStatus() != GameStatus.FINISHED) {
+            throw new IllegalStateException("Game is not finished yet");
+        }
+        boolean passed = game.getScore() >= 6;
+
+        // para dar mensaje al final de la paertida
+        if (passed) {
+            finalMessage = "Contratado. No te comeré… por ahora.";
+        } else {
+            finalMessage = "Muchas gracias, ya te llamaremos. Ha sido un placer… al menos para ti.";
+        }
+
+        return new GameResultDto(
+                game.getId(),
+                game.getPlayerId(),
+                game.getScore(),
+                game.getQuestions().size(),
+                passed,
+                game.getReward(),
+                finalMessage
+        );
 
     }
 

@@ -19,10 +19,12 @@ public class Game {
     private int currentQuestionIndex;
     private int score;
     private GameStatus status;
+    private int reward;
 
     public Game(String playerId,
                 Difficulty difficulty,
-                List<Question> questions)
+                List<Question> questions,
+                int reward)
     {
 
         this.playerId = playerId;
@@ -31,9 +33,18 @@ public class Game {
         this.currentQuestionIndex = 0;
         this.score = 0;
         this.status = GameStatus.CREATED;
+        this.reward = reward;
     }
 
     public Game() {
+    }
+
+    public int getReward() {
+        return reward;
+    }
+
+    public void setReward(int reward) {
+        this.reward = reward;
     }
 
     public String getId() {
