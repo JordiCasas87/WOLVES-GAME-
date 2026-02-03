@@ -89,6 +89,10 @@ public class GameService {
         if (gameFinded.getStatus() == GameStatus.FINISHED) {
             throw new GameLastQuestionException("The game is already finished");
         }
+        // evita error de responder la misma pregunta varias veces
+        if (gameFinded.isAwaitingAnswer()) {
+            throw new GameNoQuestionAsked("You must answer the current question first");
+        }
 
         List<Question> gameQuestions = gameFinded.getQuestions();
         int currentIndex = gameFinded.getCurrentQuestionIndex(); //0
@@ -100,6 +104,9 @@ public class GameService {
 
         Question nextQuestion = gameQuestions.get(currentIndex);
         gameFinded.setCurrentQuestionIndex(currentIndex + 1); //1
+
+        gameFinded.setAwaitingAnswer(true); //evitar respuestas repetidas
+
         gameRepo.save(gameFinded);
 
         return new QuestionDtoNextResponse(
@@ -118,6 +125,11 @@ public class GameService {
 
         if (gameFinded.getStatus() == GameStatus.FINISHED) {
             throw new GameAlreadyFinishedException("The game is already finished");
+        }
+
+        //evita que se repitan respuesrtas
+        if (!gameFinded.isAwaitingAnswer()) {
+            throw new GameNoQuestionAsked("No question to answer right now");
         }
 
         Question answeredQuestion = getAnsweredQuestion(gameFinded);
@@ -205,6 +217,7 @@ public class GameService {
             finishGame(game); //actualizamos player
         }
 
+        game.setAwaitingAnswer(false);
         gameRepo.save(game);
     }
 

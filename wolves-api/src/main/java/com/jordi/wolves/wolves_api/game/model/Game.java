@@ -20,6 +20,7 @@ public class Game {
     private int score;
     private GameStatus status;
     private int reward;
+    private boolean awaitingAnswer;
 
     public Game(String playerId,
                 Difficulty difficulty,
@@ -34,9 +35,19 @@ public class Game {
         this.score = 0;
         this.status = GameStatus.CREATED;
         this.reward = reward;
+        this.awaitingAnswer = false;
     }
 
     public Game() {
+    }
+
+
+    public boolean isAwaitingAnswer() {
+        return awaitingAnswer;
+    }
+
+    public void setAwaitingAnswer(boolean awaitingAnswer) {
+        this.awaitingAnswer = awaitingAnswer;
     }
 
     public int getReward() {
