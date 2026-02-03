@@ -8,7 +8,8 @@ public record GameDtoResponse(
         String id,
         String playerId,
         Difficulty difficulty,
-        GameStatus status
+        GameStatus status,
+        String message
 
 ) {
 }

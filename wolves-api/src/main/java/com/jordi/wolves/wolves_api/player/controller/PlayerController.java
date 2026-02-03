@@ -50,6 +50,7 @@ public class PlayerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
     // TODO: Endpoint disponible cuando se implemente JWT
 // @GetMapping("/me")
 // public PlayerDtoResponse getMyPlayer(Authentication authentication) {

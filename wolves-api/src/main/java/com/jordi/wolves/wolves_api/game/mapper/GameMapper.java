@@ -8,13 +8,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameMapper {
 
-
-    public GameDtoResponse toDto (Game game) {
+    public GameDtoResponse toDto(Game game) {
         return new GameDtoResponse(
                 game.getId(),
                 game.getPlayerId(),
                 game.getDifficulty(),
-                game.getStatus()
+                game.getStatus(),
+                null
+        );
+    }
+
+    public GameDtoResponse toDto(Game game, String message) {
+        return new GameDtoResponse(
+                game.getId(),
+                game.getPlayerId(),
+                game.getDifficulty(),
+                game.getStatus(),
+                message
         );
     }
 

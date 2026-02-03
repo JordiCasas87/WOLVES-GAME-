@@ -67,7 +67,6 @@ public class PlayerService {
 
     //metodos de player
 
-
     public Player loadPlayer(String playerId) {
         return playerRepo.findById(playerId)
                 .orElseThrow(() -> new PlayerNotFoundException("Player not found"));

@@ -24,23 +24,6 @@ private QuestionService questionService;
         return new ResponseEntity<>(dtoListQuestion, HttpStatus.OK);
     }
 
-    /*
-    @GetMapping("/questions/easy")
-public ResponseEntity<List<QuestionDtoResponse>> getEasyQuestions() {
-    return ResponseEntity.ok(questionService.getQuestionsByDifficulty(EASY));
-}
-
-@GetMapping("/questions/medium")
-public ResponseEntity<List<QuestionDtoResponse>> getMediumQuestions() {
-    return ResponseEntity.ok(questionService.getQuestionsByDifficulty(MEDIUM));
-}
-
-@GetMapping("/questions/hard")
-public ResponseEntity<List<QuestionDtoResponse>> getHardQuestions() {
-    return ResponseEntity.ok(questionService.getQuestionsByDifficulty(HARD));
-}
-     */
-
 
 
 }

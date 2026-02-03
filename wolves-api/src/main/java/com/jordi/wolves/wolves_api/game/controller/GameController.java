@@ -48,18 +48,10 @@ public class GameController {
     }
 
 
-    //endpoints
+    /*endpoints que faltan
 
-    /*
-
-	3.	POST /games/{id}/answer
-	4.	GET /games/{id}/result
 	5.	(opcional) POST /games/{id}/abandon
 
      */
-
-
-
-
 
 }

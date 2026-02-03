@@ -12,7 +12,6 @@ import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
 import com.jordi.wolves.wolves_api.game.mapper.GameMapper;
 import com.jordi.wolves.wolves_api.game.model.Game;
 import com.jordi.wolves.wolves_api.game.repository.GameRepository;
-import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
 import com.jordi.wolves.wolves_api.player.model.Player;
 import com.jordi.wolves.wolves_api.player.repository.PlayerRepository;
 import com.jordi.wolves.wolves_api.player.service.PlayerService;
@@ -25,6 +24,7 @@ import com.jordi.wolves.wolves_api.question.service.QuestionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -53,6 +53,17 @@ public class GameService {
     }
 
     public GameDtoResponse createGame(String playerId, Difficulty difficulty) {
+
+        Optional<Game> existingGame =
+                gameRepo.findFirstByPlayerIdAndStatusIn(
+                        playerId,
+                        List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
+                );
+
+
+        if (existingGame.isPresent()) {
+            return resumeExistingGame(existingGame.get());
+        }
 
         int reward = REWARDS.get(new Random().nextInt(REWARDS.size()));
 
@@ -154,6 +165,19 @@ public class GameService {
 
     //métodos para esta clase.
 
+    private GameDtoResponse resumeExistingGame(Game game) {
+
+        String message = switch (game.getStatus()) {
+            case CREATED ->
+                    "¿Ya te cansas antes de empezar? Empecemos…";
+            case IN_PROGRESS ->
+                    "¿Volvemos a la entrevista que dejaste a medias? Como se nota que esto es ficción…";
+            default -> null;
+        };
+
+        return gameMapper.toDto(game, message);
+    }
+
     private Question getAnsweredQuestion(Game game) {
 
         int currentIndex = game.getCurrentQuestionIndex();
@@ -207,7 +231,7 @@ public class GameService {
     }
 
     private void finishGame(Game game) {
-
+        // llamada a dominio player
         Player player = playerService.loadPlayer(game.getPlayerId());
         boolean passed = game.getScore() >= 6;
         playerService.applyGameResult(player, game.getReward(), passed);
