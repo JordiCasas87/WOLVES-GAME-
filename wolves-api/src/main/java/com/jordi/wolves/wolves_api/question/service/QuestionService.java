@@ -1,4 +1,5 @@
 package com.jordi.wolves.wolves_api.question.service;
+import com.jordi.wolves.wolves_api.question.exception.QuestionNotFoundException;
 
 
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoResponse;
@@ -42,6 +43,24 @@ public class QuestionService {
         return questions.stream()
                 .limit(QUESTIONS_PER_GAME)
                 .toList();
+    }
+
+
+    public List<Question> getRandomQuestionsByIds(List<String> ids, int amount) {
+
+        List<Question> questions = questionRepository.findByIdIn(ids);
+        Collections.shuffle(questions);
+
+        return questions.stream()
+                .limit(amount)
+                .toList();
+    }
+
+    public void deleteQuestionById(String id) {
+        if (!questionRepository.existsById(id)) {
+            throw new QuestionNotFoundException("Question not found with id: " + id);
+        }
+        questionRepository.deleteById(id);
     }
 
 }

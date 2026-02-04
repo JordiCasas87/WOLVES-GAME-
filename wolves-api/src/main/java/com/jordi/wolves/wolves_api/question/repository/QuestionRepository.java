@@ -9,6 +9,6 @@ import java.util.List;
 public interface QuestionRepository extends MongoRepository<Question,String> {
 
     List<Question> findByDifficulty(Difficulty difficulty);
-
+    List<Question> findByIdIn(List<String> ids);
 
 }

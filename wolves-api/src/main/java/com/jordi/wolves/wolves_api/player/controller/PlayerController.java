@@ -2,12 +2,14 @@ package com.jordi.wolves.wolves_api.player.controller;
 
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
+import com.jordi.wolves.wolves_api.player.dto.PlayerMeDto;
+import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
 import com.jordi.wolves.wolves_api.player.service.PlayerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @RestController
@@ -50,6 +52,17 @@ public class PlayerController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+
+    @GetMapping("/players/ranking")
+    public List<PlayerRankingDto> getRanking() {
+        return playerService.getRanking();
+    }
+
+
+    @GetMapping("/me")
+    public PlayerMeDto getMe(Authentication authentication) {
+        return playerService.getMe(authentication);
+    }
 
     // TODO: Endpoint disponible cuando se implemente JWT
 // @GetMapping("/me")

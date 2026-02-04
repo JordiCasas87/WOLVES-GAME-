@@ -2,11 +2,14 @@ package com.jordi.wolves.wolves_api.player.service;
 
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
+import com.jordi.wolves.wolves_api.player.dto.PlayerMeDto;
+import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
 import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
 import com.jordi.wolves.wolves_api.player.mapper.PlayerMapper;
 import com.jordi.wolves.wolves_api.player.model.Player;
 import com.jordi.wolves.wolves_api.player.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +18,8 @@ import java.util.Optional;
 @Service
 public class PlayerService {
 
-    PlayerRepository playerRepo;
-    PlayerMapper playerMapper;
+    private final PlayerRepository playerRepo;
+    private final PlayerMapper playerMapper;
 
     public PlayerService(PlayerRepository playerRepo, PlayerMapper playerMapper) {
         this.playerRepo = playerRepo;
@@ -65,10 +68,23 @@ public class PlayerService {
 
     }
 
+    public List<PlayerRankingDto> getRanking() {
+
+        return playerRepo.findAllByOrderByMoneyDesc()
+                .stream()
+                .map(playerMapper::toRankingDto)
+                .toList();
+    }
+
     //metodos de player
 
     public Player loadPlayer(String playerId) {
         return playerRepo.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException("Player not found"));
+    }
+
+    public Player loadPlayerByName(String username) {
+        return playerRepo.findByName(username)
                 .orElseThrow(() -> new PlayerNotFoundException("Player not found"));
     }
 
@@ -86,6 +102,11 @@ public class PlayerService {
         }
 
         playerRepo.save(player);
+    }
+    public PlayerMeDto getMe(Authentication authentication) {
+        String username = authentication.getName(); // viene del JWT
+        Player player = loadPlayerByName(username);
+        return playerMapper.toMeDto(player);
     }
 
     // Se usará cuando exista autenticación JWT

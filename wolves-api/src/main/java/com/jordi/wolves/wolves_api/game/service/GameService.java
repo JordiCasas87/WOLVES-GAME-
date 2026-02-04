@@ -13,7 +13,6 @@ import com.jordi.wolves.wolves_api.game.mapper.GameMapper;
 import com.jordi.wolves.wolves_api.game.model.Game;
 import com.jordi.wolves.wolves_api.game.repository.GameRepository;
 import com.jordi.wolves.wolves_api.player.model.Player;
-import com.jordi.wolves.wolves_api.player.repository.PlayerRepository;
 import com.jordi.wolves.wolves_api.player.service.PlayerService;
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoNextResponse;
 import com.jordi.wolves.wolves_api.question.enums.Difficulty;
@@ -21,6 +20,7 @@ import com.jordi.wolves.wolves_api.question.mapper.QuestionMapper;
 import com.jordi.wolves.wolves_api.question.model.Question;
 
 import com.jordi.wolves.wolves_api.question.service.QuestionService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,7 +42,6 @@ public class GameService {
                        QuestionService questionService,
                        QuestionMapper questionMapper,
                        GameMapper gameMapper,
-                       PlayerRepository playerRepo,
                        PlayerService playerService) {
 
         this.gameRepo = gameRepo;
@@ -52,14 +51,18 @@ public class GameService {
         this.playerService = playerService;
     }
 
-    public GameDtoResponse createGame(String playerId, Difficulty difficulty) {
+    public GameDtoResponse createGame(Authentication authentication, Difficulty difficulty) {
+
+        String username = authentication.getName();
+
+        Player player = playerService.loadPlayerByName(username);
+        String playerId = player.getId();
 
         Optional<Game> existingGame =
                 gameRepo.findFirstByPlayerIdAndStatusIn(
                         playerId,
                         List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
                 );
-
 
         if (existingGame.isPresent()) {
             return resumeExistingGame(existingGame.get());
@@ -174,9 +177,48 @@ public class GameService {
 
     }
 
+    public GameDtoResponse createGameWithMistakes(Authentication authentication) {
+
+        String username = authentication.getName();
+        Player player = playerService.loadPlayerByName(username);
+        String playerId = player.getId();
+
+        Optional<Game> existingGame =
+                gameRepo.findFirstByPlayerIdAndStatusIn(
+                        playerId,
+                        List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
+                );
+
+        if (existingGame.isPresent()) {
+            return resumeExistingGame(existingGame.get());
+        }
+        List<String> incorrectIds = player.getIncorrectQuestionsIdList();
+
+        if (incorrectIds.size() < 10) {
+            throw new IllegalStateException(
+                    "Not enough incorrect questions to start a mistakes game"
+            );
+        }
+
+        List<Question> questions =
+                questionService.getRandomQuestionsByIds(incorrectIds, 10);
+
+        int reward = 0; //no premio en mistakes
+
+        Game newGame = new Game(
+                playerId,
+                null, // null, no quiero estado
+                questions,
+                reward
+        );
+
+        Game savedGame = gameRepo.save(newGame);
+
+        return gameMapper.toDto(savedGame);
+    }
+
 
     //métodos para esta clase.
-
     private GameDtoResponse resumeExistingGame(Game game) {
 
         String message = switch (game.getStatus()) {

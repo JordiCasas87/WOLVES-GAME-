@@ -11,11 +11,12 @@ import com.jordi.wolves.wolves_api.question.enums.Difficulty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @RestController
 public class GameController {
 
-    private GameService gameService;
+    private final GameService gameService;
 
     public GameController(GameService gameService) {
         this.gameService = gameService;
@@ -23,8 +24,8 @@ public class GameController {
 
 
     @PostMapping("/game/new")
-    public ResponseEntity<GameDtoResponse> createGame(@RequestParam String playerId,@RequestParam Difficulty difficulty) {
-        GameDtoResponse dtoGameOut = gameService.createGame(playerId, difficulty);
+    public ResponseEntity<GameDtoResponse> createGame(@RequestParam Difficulty difficulty, Authentication authentication) {
+        GameDtoResponse dtoGameOut = gameService.createGame(authentication, difficulty);
 
         return new ResponseEntity<GameDtoResponse>(dtoGameOut, HttpStatus.CREATED);
     }
@@ -47,11 +48,15 @@ public class GameController {
         return ResponseEntity.ok(gameService.getResult(id));
     }
 
+    @PostMapping("/game/mistakes")
+    public ResponseEntity<GameDtoResponse> createGameWithMistakes(
+            Authentication authentication) {
 
-    /*endpoints que faltan
+        GameDtoResponse response =
+                gameService.createGameWithMistakes(authentication);
 
-	5.	(opcional) POST /games/{id}/abandon
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 
-     */
 
 }

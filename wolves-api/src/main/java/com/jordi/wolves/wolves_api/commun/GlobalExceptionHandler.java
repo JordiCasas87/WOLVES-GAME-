@@ -6,6 +6,7 @@ import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
 import com.jordi.wolves.wolves_api.game.exception.GameAlreadyFinishedException;
 import com.jordi.wolves.wolves_api.game.exception.GameLastQuestionException;
 import com.jordi.wolves.wolves_api.game.exception.GameNoQuestionAsked;
+import com.jordi.wolves.wolves_api.question.exception.QuestionNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<String> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(QuestionNotFoundException.class)
+    public ResponseEntity<String> handleQuestionNotFound(QuestionNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 }

@@ -16,7 +16,7 @@ public class QuestionMapper {
         );
     }
 
-    public Question toEntity(QuestionDtoResponse questionDtoResponse) {
+   /* public Question toEntity(QuestionDtoResponse questionDtoResponse) { // comentar?
 
         return  new Question(null, questionDtoResponse.intro(),
                 questionDtoResponse.text(),
@@ -24,5 +24,6 @@ public class QuestionMapper {
                 -1,
                 null);
     }
+*/
 
 }
