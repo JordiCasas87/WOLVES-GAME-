@@ -260,7 +260,8 @@ function Login({ onLoginSuccess }) {
                 onClick={() => {
                   resetForm();
                   setSelectedCharacterKey(null);
-                  setCarouselIndex(0);
+                  const conejoIndex = characters.findIndex((c) => c.key === "conejo");
+                  setCarouselIndex(conejoIndex >= 0 ? conejoIndex : 0);
                   setMode("character");
                 }}
                 type="button"
