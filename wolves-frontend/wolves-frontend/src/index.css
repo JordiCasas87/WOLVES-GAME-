@@ -1,0 +1,45 @@
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Gumela";
+  src: url("./assets/fonts/Gumela.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /*
+    "Dungeons & Dragons"-ish vibe without downloading fonts:
+    we use a fantasy-looking display stack, with sensible fallbacks.
+    If you later add a real font file, we can swap this to @font-face.
+  */
+  --font-display: "Gumela", "Cinzel", "Trajan Pro", "Palatino Linotype", "Book Antiqua",
+    Palatino, "Times New Roman", serif;
+  --font-body: "IM Fell English", "Garamond", Georgia, serif;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.03em;
+}
+
+h1 {
+  text-transform: uppercase;
+}

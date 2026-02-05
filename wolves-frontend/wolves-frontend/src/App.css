@@ -1,0 +1,1290 @@
+/* contenedor base de TODAS las pantallas */
+.screen {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  padding: 24px;
+}
+
+/* layout de Login */
+.login-screen {
+  position: relative;
+  background-image: url("./assets/images/pasillocentral.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Palette pulled from pasillo.png (greens/teals + stone) */
+  --login-accent: #346c5c;
+  --login-accent-hover: #3b7a68;
+  --login-ink: #f5f6f2;
+  --login-surface: rgba(26, 38, 38, 0.86);
+  --login-surface-2: rgba(24, 32, 28, 0.78);
+  --login-border: rgba(100, 116, 100, 0.32); /* #647464 */
+}
+
+.login-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-screen {
+  background-image: url("./assets/images/Portada final.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.stats-screen {
+  background-image: url("./assets/images/posterfinal1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.game-screen {
+  background-image: url("./assets/images/oficina.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.menu-layout {
+  width: 100%;
+  max-width: 360px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+
+  position: relative;
+  overflow: hidden;
+
+  /* Palette sampled from Portada final.png (slate/steel) */
+  --menu-surface: rgba(28, 36, 52, 0.72); /* #1c2434 */
+  --menu-surface-2: rgba(36, 44, 60, 0.62); /* #242c3c */
+  --menu-border: rgba(52, 68, 76, 0.34); /* #34444c */
+
+  background: linear-gradient(180deg, var(--menu-surface), var(--menu-surface-2));
+  border: 1px solid var(--menu-border);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+.menu-layout::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+
+  /* Same dungeon brick texture, tuned a bit cooler for the cover image */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(245, 246, 242, 0.06) 0 2px,
+      transparent 2px 26px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 246, 242, 0.05) 0 2px,
+      transparent 2px 60px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 246, 242, 0.04) 0 2px,
+      transparent 2px 60px
+    ),
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(52, 68, 76, 0.28),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 70% 75%,
+      rgba(44, 52, 60, 0.22),
+      transparent 60%
+    );
+
+  background-size:
+    100% 28px,
+    64px 100%,
+    64px 100%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    0 0,
+    0 0,
+    32px 14px,
+    0 0,
+    0 0;
+
+  opacity: 0.28;
+  transform: rotate(-6deg);
+  animation: dungeonTextureDrift 14s linear infinite;
+}
+
+.menu-layout::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 70% at 50% 0%,
+      rgba(52, 108, 92, 0.16),
+      transparent 60%
+    ),
+    radial-gradient(
+      140% 90% at 50% 100%,
+      rgba(0, 0, 0, 0.55),
+      transparent 65%
+    );
+  opacity: 1;
+}
+
+.menu-layout > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Difficulty modal (Menu) */
+.menu-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  /* Page background while choosing difficulty */
+  background: #000;
+}
+
+.menu-modal-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.menu-side-flame {
+  width: clamp(110px, 16vw, 260px);
+  height: auto;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.6));
+  opacity: 0.95;
+  user-select: none;
+  pointer-events: none;
+}
+
+.menu-side-flame--left {
+  transform: scaleX(-1);
+}
+
+@media (max-width: 760px) {
+  .menu-side-flame {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-side-flame {
+    display: none;
+  }
+}
+
+.menu-modal {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  position: relative;
+  overflow: hidden;
+
+  /* "Pasillo" photo background for the difficulty box */
+  background-image: url("./assets/images/pasillo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border: 1px solid rgba(245, 246, 242, 0.16);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.7);
+}
+
+.menu-modal::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+
+  /* Scrim for readability on top of the photo */
+  background:
+    radial-gradient(120% 85% at 50% 0%, rgba(0, 0, 0, 0.62), transparent 60%),
+    radial-gradient(140% 95% at 50% 100%, rgba(0, 0, 0, 0.75), transparent 70%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.62));
+
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+.menu-modal > * {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-modal-title {
+  margin: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 18px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.menu-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.menu-modal .dungeon-btn {
+  width: 84%;
+  max-width: 280px;
+  padding: 12px 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border-width: 2px;
+}
+
+/* Stats / Ranking screen (reuses menu layout look) */
+.stats-layout {
+  max-width: 560px;
+  gap: 14px;
+  padding: 16px 16px 18px;
+}
+
+.stats-title {
+  margin: 0;
+  font-size: clamp(22px, 2.6vw, 30px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stats-subtitle {
+  margin: 0 0 10px;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stats-card {
+  width: 100%;
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.4);
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(245, 246, 242, 0.14);
+  font-family: var(--font-display);
+  text-align: center;
+  align-items: center;
+}
+
+.stats-row:last-child {
+  border-bottom: none;
+}
+
+.stats-row span {
+  opacity: 0.9;
+  justify-self: center;
+}
+
+.stats-row strong {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  justify-self: center;
+}
+
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ranking-item {
+  display: grid;
+  grid-template-columns: 54px 1fr 86px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(245, 246, 242, 0.12);
+  font-size: 14px;
+}
+
+.ranking-pos {
+  font-family: var(--font-display);
+  letter-spacing: 0.06em;
+  opacity: 0.9;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-name {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-score {
+  text-align: right;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+.ranking-medal {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  flex: 0 0 16px;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.45),
+    0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+.ranking-medal--gold {
+  background: radial-gradient(circle at 35% 35%, #fff1a6, #d4af37 60%, #6b4f12);
+}
+
+.ranking-medal--silver {
+  background: radial-gradient(circle at 35% 35%, #ffffff, #bfc7d0 60%, #5a616a);
+}
+
+.ranking-medal--bronze {
+  background: radial-gradient(circle at 35% 35%, #ffd1a6, #b87333 60%, #5d3413);
+}
+
+.ranking-pos--gold {
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.28);
+}
+
+.ranking-pos--silver {
+  text-shadow: 0 0 12px rgba(191, 199, 208, 0.24);
+}
+
+.ranking-pos--bronze {
+  text-shadow: 0 0 12px rgba(184, 115, 51, 0.24);
+}
+
+.stats-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.stats-layout .dungeon-btn {
+  width: 84%;
+  max-width: 280px;
+  padding: 12px 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border-width: 2px;
+}
+
+.auth-layout {
+  width: 100%;
+  max-width: 460px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+
+  position: relative;
+  overflow: hidden;
+
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: none;
+}
+
+.character-layout {
+  width: 100%;
+  max-width: 900px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+
+  position: relative;
+  overflow: hidden;
+
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: none;
+}
+
+.character-carousel {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+}
+
+.carousel-arrow {
+  height: 44px;
+  width: 44px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(36, 52, 52, 0.45);
+  color: rgba(245, 246, 242, 0.92);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 18px;
+}
+
+.carousel-arrow:hover {
+  border-color: rgba(52, 108, 92, 0.65);
+}
+
+.coverflow-stage {
+  border-radius: 16px;
+  border: 1px solid rgba(100, 116, 100, 0.35);
+  background: transparent;
+  overflow: hidden;
+  height: clamp(360px, 55vh, 460px);
+  display: grid;
+  place-items: center;
+  touch-action: pan-y;
+  position: relative;
+}
+
+.coverflow-stage:focus-visible {
+  outline: 3px solid rgba(52, 108, 92, 0.55);
+  outline-offset: 4px;
+}
+
+.coverflow {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.coverflow-card {
+  position: absolute;
+  height: min(92%, 420px);
+  width: auto;
+  max-width: 330px;
+  aspect-ratio: 3 / 4;
+  border-radius: 16px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+
+  border: 1px solid rgba(245, 246, 242, 0.18);
+  background: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+
+  transform:
+    translate3d(calc(var(--offset) * 100px), 0, calc(var(--abs) * -120px))
+    rotateY(calc(var(--offset) * -18deg))
+    scale(calc(1 - (var(--abs) * 0.12)));
+  opacity: calc(1 - (var(--abs) * 0.22));
+
+  transition:
+    transform 380ms ease,
+    opacity 380ms ease,
+    box-shadow 380ms ease,
+    border-color 380ms ease;
+}
+
+.coverflow-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.18),
+    transparent 30%,
+    rgba(0, 0, 0, 0.28)
+  );
+  opacity: calc(0.25 + (var(--abs) * 0.08));
+}
+
+.coverflow-card:hover {
+  border-color: rgba(52, 108, 92, 0.55);
+}
+
+.coverflow-card-active {
+  border-color: rgba(52, 108, 92, 0.8);
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.55),
+    0 0 22px rgba(52, 108, 92, 0.22);
+  opacity: 1;
+}
+
+.coverflow-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+
+.character-frame {
+  border-radius: 16px;
+  border: 1px solid rgba(100, 116, 100, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  /* "foto de carnet" vibe (portrait) */
+  aspect-ratio: 3 / 4;
+  max-height: 420px;
+  display: grid;
+  place-items: center;
+  touch-action: pan-y;
+}
+
+.character-frame:focus-visible {
+  outline: 3px solid rgba(52, 108, 92, 0.55);
+  outline-offset: 4px;
+}
+
+.character-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  animation: carnetIn 240ms ease both;
+}
+
+@keyframes carnetIn {
+  from {
+    opacity: 0.7;
+    transform: translateX(10px) scale(0.99);
+    filter: saturate(0.95) contrast(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: saturate(1) contrast(1);
+  }
+}
+
+.character-name {
+  margin: 0;
+  font-family: var(--font-display);
+  color: rgba(245, 246, 242, 0.92);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 16px;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(245, 246, 242, 0.25);
+}
+
+.dot-active {
+  background: rgba(52, 108, 92, 0.95);
+  box-shadow: 0 0 0 3px rgba(52, 108, 92, 0.18);
+}
+
+.signup-layout {
+  width: min(92vw, 700px);
+  position: relative;
+
+  border-radius: 18px;
+  border: 1px solid rgba(100, 116, 100, 0.32);
+  overflow: hidden;
+
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+.signup-cv {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.signup-cv--hamster {
+  /*
+    HamsterCV artwork looks more "zoomed" than the rest.
+    Scale it down visually without changing the layout size.
+  */
+  transform: scale(0.72);
+  transform-origin: center;
+}
+
+.signup-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+
+.signup-form {
+  /* Keep the form panel a fixed-ish size even if the CV image grows */
+  width: min(280px, 86vw);
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(245, 246, 242, 0.14);
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.signup-subtitle {
+  margin: -2px auto 8px;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.12);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.signup-form .auth-title {
+  text-align: center;
+}
+
+.signup-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 246, 242, 0.12);
+  background: rgba(0, 0, 0, 0.48);
+}
+
+.signup-form .text-input {
+  padding: 10px 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.signup-fields .text-input {
+  border-color: rgba(245, 246, 242, 0.14);
+  background: rgba(0, 0, 0, 0.52);
+}
+
+.signup-fields .text-input:focus {
+  border-color: rgba(52, 108, 92, 0.75);
+  box-shadow: 0 0 0 3px rgba(52, 108, 92, 0.18);
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: rgba(245, 246, 242, 0.92);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+
+  background: rgba(36, 52, 52, 0.18);
+  border: 2px solid rgba(245, 246, 242, 0.18);
+  border-radius: 12px;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.45);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.signup-btn:hover {
+  border-color: rgba(52, 108, 92, 0.75);
+  box-shadow: inset 0 0 18px rgba(52, 108, 92, 0.22);
+  transform: translateY(-1px);
+}
+
+.signup-btn:active {
+  transform: translateY(1px);
+}
+
+.signup-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-layout::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  pointer-events: none;
+
+  /* Animated "dungeon brick" texture overlay */
+  background-image:
+    /* horizontal mortar */
+    repeating-linear-gradient(
+      0deg,
+      rgba(245, 246, 242, 0.07) 0 2px,
+      transparent 2px 26px
+    ),
+    /* vertical mortar (row A) */
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 246, 242, 0.06) 0 2px,
+      transparent 2px 60px
+    ),
+    /* vertical mortar (row B, offset) */
+    repeating-linear-gradient(
+      90deg,
+      rgba(245, 246, 242, 0.05) 0 2px,
+      transparent 2px 60px
+    ),
+    /* subtle grime / stone variation */
+    radial-gradient(
+      circle at 30% 25%,
+      rgba(52, 108, 92, 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 70% 75%,
+      rgba(100, 116, 100, 0.18),
+      transparent 60%
+    );
+
+  background-size:
+    100% 28px,
+    64px 100%,
+    64px 100%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    0 0,
+    0 0,
+    32px 14px,
+    0 0,
+    0 0;
+
+  opacity: 0;
+  transform: rotate(-6deg);
+  animation: dungeonTextureDrift 14s linear infinite;
+}
+
+.auth-layout::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* a soft moving highlight + vignette to feel "alive" */
+  background:
+    radial-gradient(
+      120% 70% at 50% 0%,
+      rgba(52, 108, 92, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      140% 90% at 50% 100%,
+      rgba(0, 0, 0, 0.55),
+      transparent 65%
+    );
+  opacity: 0;
+  animation: dungeonGlow 8s ease-in-out infinite;
+}
+
+.auth-layout > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes dungeonTextureDrift {
+  0% {
+    background-position: 0 0, 0 0, 32px 14px, 0 0, 0 0;
+  }
+  100% {
+    background-position: 0 84px, 96px 0, 128px 42px, 0 0, 0 0;
+  }
+}
+
+@keyframes dungeonGlow {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    filter: saturate(1.08) brightness(1.06);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-layout::before,
+  .auth-layout::after,
+  .menu-layout::before,
+  .menu-layout::after {
+    animation: none;
+  }
+
+  .coverflow-card {
+    transition: none;
+  }
+}
+
+.logo-video {
+  width: 100%;
+  max-width: 432px;
+  margin: 0 auto;
+  display: block;
+
+  border-radius: 14px;
+  border: 1px solid rgba(52, 108, 92, 0.55);
+  background: rgba(36, 52, 52, 0.35);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+
+  height: auto;
+  object-fit: contain;
+}
+
+.helper-text {
+  margin: 0;
+  color: var(--login-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.95;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 20px;
+}
+
+.text-input {
+  width: 100%;
+  padding: 14px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font-family: var(--font-body);
+  font-size: 16px;
+  outline: none;
+}
+
+.text-input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.login-screen .text-input {
+  border-color: rgba(100, 116, 100, 0.4);
+  background: rgba(36, 52, 52, 0.35);
+}
+
+.login-screen .auth-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+}
+
+.text-input:focus {
+  border-color: rgba(52, 108, 92, 0.65);
+  box-shadow: 0 0 0 3px rgba(52, 108, 92, 0.22);
+}
+
+.error-text {
+  margin: 0;
+  color: #ff6b6b;
+  font-size: 14px;
+}
+
+/* texto de pregunta */
+.question-text {
+  max-width: 700px;
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+/* layout especifico de Game: alinea texto y botones en la misma columna */
+.game-layout {
+  width: 100%;
+  max-width: 420px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+
+  /* Cajetin (transparente) para que el fondo se vea */
+  padding: 16px 14px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
+
+  /* Translucido con un poco de blur (si el navegador lo soporta) */
+  backdrop-filter: blur(10px) saturate(115%);
+  -webkit-backdrop-filter: blur(10px) saturate(115%);
+}
+
+.game-difficulty-pill {
+  margin: 0 auto;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.game-layout .primary-button {
+  width: 100%;
+  max-width: none;
+}
+
+.game-layout .question-text {
+  max-width: 100%;
+  margin-bottom: 0;
+
+  /* Fondo negro para legibilidad sobre la oficina */
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.62);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+}
+
+/* contenedor de respuestas */
+.answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  width: 100%;
+  max-width: 500px;
+}
+
+.game-layout .answers-container {
+  max-width: none;
+}
+
+.game-layout .dungeon-btn {
+  width: 100%;
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 12px 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border-width: 2px;
+}
+
+/* botones */
+.primary-button {
+  width: 90vw;
+  max-width: 360px;
+  padding: 16px 18px;
+  font-size: 18px;
+  font-family: var(--font-display);
+
+  background-color: #b30000;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  /* For long answer text */
+  white-space: normal;
+  text-align: center;
+}
+
+.primary-button:hover {
+  background-color: #ff0000;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondary-button {
+  width: 90vw;
+  max-width: 360px;
+  padding: 16px 18px;
+  font-size: 18px;
+  font-family: var(--font-display);
+
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.secondary-button:hover {
+  border-color: rgba(255, 0, 0, 0.65);
+}
+
+.auth-layout .primary-button,
+.auth-layout .secondary-button {
+  width: 100%;
+  max-width: none;
+}
+
+/* Login color overrides to match pasillo palette */
+.login-screen .primary-button {
+  background-color: var(--login-accent);
+  color: var(--login-ink);
+  border: 1px solid rgba(100, 116, 100, 0.22);
+}
+
+.login-screen .primary-button:hover {
+  background-color: var(--login-accent-hover);
+}
+
+.login-screen .secondary-button {
+  background-color: rgba(52, 108, 92, 0.12);
+  color: var(--login-ink);
+  border-color: rgba(100, 116, 100, 0.55);
+}
+
+.login-screen .secondary-button:hover {
+  border-color: rgba(52, 108, 92, 0.85);
+}
+
+/* Dungeon-styled button (used in Login) */
+.dungeon-btn {
+  width: 90vw;
+  max-width: 360px;
+  padding: 17px 26px;
+  font-size: 1.12rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease, background 0.25s ease;
+
+  /* stone / metal vibe, but driven by pasillo palette when available */
+  background: linear-gradient(135deg, rgba(36, 52, 52, 0.95) 0%, rgba(0, 0, 0, 0.92) 100%);
+  border: 3px solid rgba(100, 116, 100, 0.42);
+  border-radius: 10px;
+  box-shadow:
+    0 0 0 2px rgba(26, 26, 26, 0.7),
+    inset 0 0 10px rgba(0, 0, 0, 0.75),
+    6px 10px 22px rgba(0, 0, 0, 0.55);
+}
+
+.dungeon-btn:hover {
+  color: #fff;
+  border-color: rgba(52, 108, 92, 0.85);
+  text-shadow: 0 0 10px rgba(52, 108, 92, 0.55);
+  box-shadow:
+    0 0 0 2px rgba(52, 108, 92, 0.25),
+    0 0 22px rgba(52, 108, 92, 0.28),
+    inset 0 0 16px rgba(52, 108, 92, 0.22);
+  transform: translateY(-2px);
+}
+
+.dungeon-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.85);
+}
+
+.dungeon-btn:focus-visible {
+  outline: 3px solid rgba(52, 108, 92, 0.55);
+  outline-offset: 3px;
+}
+
+.dungeon-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-layout .dungeon-btn {
+  width: 100%;
+  max-width: none;
+}
+
+.character-layout .dungeon-btn,
+.character-layout .secondary-button {
+  width: 100%;
+  max-width: none;
+}
+
+.character-select-btn {
+  width: 100%;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+
+  padding: 15px 22px;
+  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(245, 246, 242, 0.18);
+  border-radius: 12px;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.55);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.character-select-btn:hover {
+  border-color: rgba(52, 108, 92, 0.75);
+  box-shadow: inset 0 0 18px rgba(52, 108, 92, 0.22);
+  transform: translateY(-1px);
+}
+
+.character-select-btn:active {
+  transform: translateY(1px);
+}
+
+.character-title {
+  width: fit-content;
+  margin: 0 auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+}
+
+.character-name-pill {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(245, 246, 242, 0.14);
+}
+
+.signup-layout .dungeon-btn,
+.signup-layout .secondary-button {
+  width: 100%;
+  max-width: none;
+}
+
+.signup-layout .signup-btn {
+  width: 100%;
+  max-width: none;
+}
+
+.menu-layout .dungeon-btn {
+  width: 84%;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+  /* ~30% smaller than the global dungeon button */
+  padding: 12px 18px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  border-width: 2px;
+}
+
+.page-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  padding: 0 16px;
+
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.25;
+  color: rgba(245, 246, 242, 0.82);
+  text-align: center;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  letter-spacing: 0.02em;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 420px) {
+  .page-footer {
+    font-size: 11px;
+  }
+}
