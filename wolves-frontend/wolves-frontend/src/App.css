@@ -36,10 +36,98 @@
 }
 
 .menu-screen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background-image: url("./assets/images/Portada final.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.menu-screen::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Warm torch-like light */
+  background:
+    radial-gradient(
+      640px 460px at 16% 32%,
+      rgba(255, 154, 78, 0.38),
+      transparent 62%
+    ),
+    radial-gradient(
+      560px 420px at 84% 34%,
+      rgba(255, 132, 58, 0.32),
+      transparent 64%
+    ),
+    radial-gradient(
+      900px 700px at 50% 110%,
+      rgba(255, 196, 120, 0.14),
+      transparent 66%
+    );
+
+  opacity: 0.78;
+  mix-blend-mode: screen;
+  transform: translateZ(0);
+  animation: torchFlicker 2.6s infinite;
+}
+
+@keyframes torchFlicker {
+  0% {
+    opacity: 0.66;
+    filter: brightness(0.95) saturate(1.15);
+    transform: scale(1);
+  }
+  6% {
+    opacity: 0.78;
+  }
+  13% {
+    opacity: 0.7;
+  }
+  20% {
+    opacity: 0.88;
+    filter: brightness(1.08) saturate(1.2);
+  }
+  28% {
+    opacity: 0.72;
+  }
+  37% {
+    opacity: 0.92;
+  }
+  46% {
+    opacity: 0.74;
+  }
+  58% {
+    opacity: 0.96;
+    filter: brightness(1.12) saturate(1.25);
+    transform: scale(1.01);
+  }
+  70% {
+    opacity: 0.72;
+    filter: brightness(1) saturate(1.15);
+    transform: scale(1);
+  }
+  82% {
+    opacity: 0.9;
+  }
+  93% {
+    opacity: 0.68;
+  }
+  100% {
+    opacity: 0.78;
+    filter: brightness(0.98) saturate(1.15);
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-screen::before {
+    animation: none;
+  }
 }
 
 .stats-screen {
@@ -66,6 +154,7 @@
   gap: 12px;
 
   position: relative;
+  z-index: 1;
   overflow: hidden;
 
   /* Palette sampled from Portada final.png (slate/steel) */
