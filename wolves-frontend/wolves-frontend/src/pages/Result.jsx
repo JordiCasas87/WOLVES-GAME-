@@ -1,11 +1,87 @@
-function Result({ onRestart }) {
+import { useMemo, useState } from "react";
+
+const wolfWinVideoUrl = new URL("../assets/animaciones/loboGanas.mp4", import.meta.url).href;
+const wolfLoseVideoUrl = new URL("../assets/animaciones/loboPierdes.mp4", import.meta.url).href;
+
+function Result({ onRestart, result }) {
+  const [isSoundEnabled, setIsSoundEnabled] = useState(false);
+
+  const videoSrc = useMemo(() => {
+    if (!result) return "";
+    return result.passed ? wolfWinVideoUrl : wolfLoseVideoUrl;
+  }, [result]);
+
+  const playWithSound = (video) => {
+    video.muted = false;
+    video.currentTime = 0;
+    const attempt = video.play();
+    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+    setIsSoundEnabled(true);
+  };
+
   return (
-    <div className="screen">
-      <h1>RESULTADO</h1>
-      <p>El lobo decide tu destino...</p>
-      <button className="primary-button" onClick={onRestart}>
-        Volver al inicio
-      </button>
+    <div className="screen menu-screen">
+      <div className="menu-layout stats-layout">
+        <h2 className="stats-title">Resultado</h2>
+
+        {!result ? (
+          <p className="helper-text">Sin resultado.</p>
+        ) : (
+          <>
+            <div className="result-video-wrap">
+              <video
+                className="result-video"
+                src={videoSrc}
+                autoPlay
+                muted={!isSoundEnabled}
+                playsInline
+                preload="auto"
+                role="button"
+                tabIndex={0}
+                aria-label="Reproducir vídeo del resultado con sonido"
+                onClick={(e) => playWithSound(e.currentTarget)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    playWithSound(e.currentTarget);
+                  }
+                }}
+              />
+
+              {!isSoundEnabled && (
+                <p className="result-video-hint" aria-hidden="true">
+                  Clic para activar sonido
+                </p>
+              )}
+            </div>
+
+            <section className="stats-card" aria-label="Resumen de la partida">
+              <div className="stats-row">
+                <span>Puntuación</span>
+                <strong>
+                  {result.score ?? 0}/{result.totalQuestions ?? 10}
+                </strong>
+              </div>
+              <div className="stats-row">
+                <span>Estado</span>
+                <strong>{result.passed ? "APROBADO" : "SUSPENSO"}</strong>
+              </div>
+              <div className="stats-row">
+                <span>Recompensa</span>
+                <strong>{result.reward ?? 0}</strong>
+              </div>
+            </section>
+
+            {result.finalMessage && <p className="helper-text">{result.finalMessage}</p>}
+          </>
+        )}
+
+        <div className="stats-actions">
+          <button className="dungeon-btn" onClick={onRestart} type="button">
+            Volver al menú
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

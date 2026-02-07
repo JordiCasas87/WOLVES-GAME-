@@ -92,13 +92,20 @@ public class GameService {
         if (gameFinded.getStatus() == GameStatus.FINISHED) {
             throw new GameLastQuestionException("The game is already finished");
         }
-        // evita error de responder la misma pregunta varias veces
-        if (gameFinded.isAwaitingAnswer()) {
-            throw new GameNoQuestionAsked("You must answer the current question first");
-        }
 
         List<Question> gameQuestions = gameFinded.getQuestions();
         int currentIndex = gameFinded.getCurrentQuestionIndex(); //0
+
+        // Si hay una pregunta pendiente de responder, devolverla de nuevo
+        if (gameFinded.isAwaitingAnswer()) {
+            Question pendingQuestion = gameQuestions.get(currentIndex - 1);
+            return new QuestionDtoNextResponse(
+                    currentIndex,
+                    pendingQuestion.getIntro(),
+                    pendingQuestion.getText(),
+                    pendingQuestion.getAnswers()
+            );
+        }
 
         //para detener la partida llegado a 10.
         if (currentIndex >= gameQuestions.size()) {

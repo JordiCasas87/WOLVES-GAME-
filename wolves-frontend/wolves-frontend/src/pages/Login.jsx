@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { login, register } from "../services/auth";
 
 const logoVideoUrl = new URL(
-  "../assets/videos/logovideo.mov",
+  "../assets/videos/videoLogofinal.mov",
+  import.meta.url,
+).href;
+
+const fondoEntradaVideoUrl = new URL(
+  "../assets/animaciones/fondoEntrada.mp4",
   import.meta.url,
 ).href;
 
@@ -90,7 +95,7 @@ function wrapOffset(index, activeIndex, length) {
   return diff;
 }
 
-function Login({ onLoginSuccess }) {
+function Login({ onLoginSuccess, onCredits }) {
   const [mode, setMode] = useState("choose"); // choose | login | character | signup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -224,10 +229,24 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div className="screen login-screen">
-      {mode !== "character" && mode !== "signup" && (
-        <div className="auth-layout">
-          <video
-            className="logo-video"
+      <div className="login-bg" aria-hidden="true">
+        <video
+          className="login-bg-video"
+          src={fondoEntradaVideoUrl}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+        >
+          Tu navegador no soporta el video.
+        </video>
+      </div>
+
+	      {mode !== "character" && mode !== "signup" && (
+	        <div className="auth-layout">
+	          <video
+	            className="logo-video"
             src={logoVideoUrl}
             autoPlay
             loop
@@ -241,8 +260,6 @@ function Login({ onLoginSuccess }) {
 
           {mode === "choose" && (
             <>
-              <p className="helper-text">Elige tu destino.</p>
-
               <button
                 className="dungeon-btn"
                 onClick={() => {
@@ -272,9 +289,9 @@ function Login({ onLoginSuccess }) {
             </>
           )}
 
-          {mode === "login" && (
-            <form className="auth-form" onSubmit={handleLogin}>
-              <h2 className="auth-title">Iniciar sesion</h2>
+	          {mode === "login" && (
+	            <form className="auth-form" onSubmit={handleLogin}>
+	              <h2 className="auth-title">Iniciar sesion</h2>
 
               <input
                 className="text-input"
@@ -301,18 +318,27 @@ function Login({ onLoginSuccess }) {
                 {isSubmitting ? "Entrando..." : "Entrar"}
               </button>
 
-              <button
-                className="secondary-button"
-                type="button"
-                onClick={goChoose}
-                disabled={isSubmitting}
-              >
-                Volver
-              </button>
-            </form>
-          )}
-        </div>
-      )}
+	              <button
+	                className="secondary-button"
+	                type="button"
+	                onClick={goChoose}
+	                disabled={isSubmitting}
+	              >
+	                Volver
+	              </button>
+	            </form>
+	          )}
+
+            <button
+              className="credits-btn"
+              type="button"
+              onClick={onCredits}
+              disabled={isSubmitting}
+            >
+              CREDITS Don&apos;t push
+            </button>
+	        </div>
+	      )}
 
       {mode === "character" && (
         <div className="character-layout">
@@ -583,6 +609,7 @@ function Login({ onLoginSuccess }) {
           </div>
         </div>
       )}
+
     </div>
   );
 }

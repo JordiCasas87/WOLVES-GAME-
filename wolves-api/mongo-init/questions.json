@@ -1,5 +1,8 @@
 [
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9928c"
+    },
     "intro": "Veamos qué sabes, pequeño animalillo…",
     "text": "¿Qué es una clase abstracta?",
     "answers": [
@@ -12,6 +15,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9928d"
+    },
     "intro": "No estoy muy impresionado contigo de momento. A ver si esto mejora.",
     "text": "¿Qué es una clase inmutable?",
     "answers": [
@@ -24,6 +30,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9928e"
+    },
     "intro": "Antes de que me duerma… responde rápido a esto.",
     "text": "¿Qué es una interfaz en Java?",
     "answers": [
@@ -36,6 +45,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9928f"
+    },
     "intro": "Esto es fácil… incluso para ti.",
     "text": "¿Se puede implementar un método en una interfaz?",
     "answers": [
@@ -48,6 +60,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99290"
+    },
     "intro": "Intenta no fallar, me da pereza rellenar informes.",
     "text": "¿Qué es un método default?",
     "answers": [
@@ -60,6 +75,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99291"
+    },
     "intro": "He visto cachorros hacerlo mejor. Sorpréndeme.",
     "text": "¿Qué es la sobrescritura de métodos?",
     "answers": [
@@ -72,6 +90,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99292"
+    },
     "intro": "No te preocupes si fallas esta pregunta, creo que ya estabas fuera.",
     "text": "¿Se pueden sobrescribir los constructores?",
     "answers": [
@@ -84,6 +105,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99293"
+    },
     "intro": "Respira hondo. Es tu última oportunidad… bueno, quizá no.",
     "text": "¿Se pueden sobrescribir métodos estáticos?",
     "answers": [
@@ -96,6 +120,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99294"
+    },
     "intro": "Concéntrate. No todos llegan a esta parte.",
     "text": "¿Qué es un constructor por defecto?",
     "answers": [
@@ -108,6 +135,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99295"
+    },
     "intro": "Me pagan más a mí por no hacer nada que a ti si te contratan. Ha. Ha. Ha.",
     "text": "¿Qué es la sobrecarga de métodos?",
     "answers": [
@@ -120,6 +150,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99296"
+    },
     "intro": "Impresióname. O no. Total, da igual.",
     "text": "¿En qué consiste el patrón Singleton?",
     "answers": [
@@ -132,6 +165,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99297"
+    },
     "intro": "Si fallas, fingiré que nunca estuviste aquí.",
     "text": "¿Qué es el patrón Factory?",
     "answers": [
@@ -141,9 +177,12 @@
       "Un patrón para herencia múltiple"
     ],
     "correctAnswerIndex": 2,
-    "difficulty": "MEDIUM"
+    "difficulty": "HARD"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99298"
+    },
     "intro": "Antes de la pregunta… ¿te importa si te como? Es broma. Creo.",
     "text": "¿Permite Java la herencia múltiple?",
     "answers": [
@@ -156,6 +195,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc99299"
+    },
     "intro": "Esto debería dolerte un poco.",
     "text": "¿Qué es la composición en Java?",
     "answers": [
@@ -168,6 +210,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929a"
+    },
     "intro": "No esperaba mucho… pero aún puedes decepcionarme.",
     "text": "¿Cuáles son los modificadores de acceso en Java?",
     "answers": [
@@ -180,6 +225,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929b"
+    },
     "intro": "¿Eres tan aburrido como pareces? En fin, contesta esto.",
     "text": "¿Qué es una clase interna?",
     "answers": [
@@ -192,6 +240,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929c"
+    },
     "intro": "No cierres los ojos ahora.",
     "text": "¿Qué es una clase local?",
     "answers": [
@@ -204,6 +255,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929d"
+    },
     "intro": "Esto empieza a ponerse divertido.",
     "text": "¿Qué es una clase anónima?",
     "answers": [
@@ -216,6 +270,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929e"
+    },
     "intro": "Si lo haces muy mal, te pagaremos menos. Contesta.",
     "text": "¿Qué es la inyección de dependencias?",
     "answers": [
@@ -228,6 +285,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc9929f"
+    },
     "intro": "Esto no es personal. Bueno, quizá sí.",
     "text": "¿Qué es el framework Spring?",
     "answers": [
@@ -240,6 +300,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a0"
+    },
     "intro": "Vamos terminando. No me hagas perder más tiempo.",
     "text": "¿Para qué se usa la palabra clave transient?",
     "answers": [
@@ -249,9 +312,12 @@
       "Para hacer un atributo inmutable"
     ],
     "correctAnswerIndex": 0,
-    "difficulty": "MEDIUM"
+    "difficulty": "HARD"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a1"
+    },
     "intro": "Última. Y luego hablamos de tu futuro.",
     "text": "¿Cómo se comparan correctamente dos Strings en Java?",
     "answers": [
@@ -264,6 +330,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a2"
+    },
     "intro": "Veamos si sabes algo de esto o solo ladras mucho.",
     "text": "¿Para qué se utiliza el método hashCode()?",
     "answers": [
@@ -276,6 +345,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a3"
+    },
     "intro": "No falles esta… suele doler cuando lo haces.",
     "text": "¿Para qué sirve el método equals()?",
     "answers": [
@@ -288,6 +360,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a4"
+    },
     "intro": "Esta pregunta separa a los cachorros de los lobos.",
     "text": "¿Qué relación existe entre equals() y hashCode()?",
     "answers": [
@@ -300,6 +375,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a5"
+    },
     "intro": "Concéntrate… no quiero repetirla.",
     "text": "¿Cuál es la diferencia entre List, Set y Map?",
     "answers": [
@@ -312,6 +390,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a6"
+    },
     "intro": "Esto es básico. O debería serlo.",
     "text": "¿Cuál es la diferencia principal entre ArrayList y LinkedList?",
     "answers": [
@@ -324,6 +405,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a7"
+    },
     "intro": "No te duermas ahora.",
     "text": "¿Qué es un Map en Java?",
     "answers": [
@@ -336,6 +420,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a8"
+    },
     "intro": "Esta suele confundirse… no me decepciones.",
     "text": "¿Para qué se usa la palabra clave final?",
     "answers": [
@@ -348,6 +435,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992a9"
+    },
     "intro": "Aquí empiezan los problemas de verdad.",
     "text": "¿Qué es una excepción en Java?",
     "answers": [
@@ -360,6 +450,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992aa"
+    },
     "intro": "Respira hondo antes de contestar.",
     "text": "¿Cuál es la diferencia entre Exception y RuntimeException?",
     "answers": [
@@ -372,6 +465,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992ab"
+    },
     "intro": "Si dices que sí, mientes.",
     "text": "¿Es obligatorio capturar una RuntimeException?",
     "answers": [
@@ -384,6 +480,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992ac"
+    },
     "intro": "Esto ya no tiene arreglo si lo fallas.",
     "text": "¿Qué es un Error en Java?",
     "answers": [
@@ -396,6 +495,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992ad"
+    },
     "intro": "Ahora vamos a ver si sabes reutilizar cosas.",
     "text": "¿Qué son los genéricos en Java?",
     "answers": [
@@ -408,6 +510,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992ae"
+    },
     "intro": "Esta suele aparecer cuando algo va muy mal.",
     "text": "¿Qué es un StackOverflow?",
     "answers": [
@@ -417,9 +522,12 @@
       "Un tipo de excepción controlada"
     ],
     "correctAnswerIndex": 1,
-    "difficulty": "MEDIUM"
+    "difficulty": "HARD"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992af"
+    },
     "intro": "No, no es magia.",
     "text": "¿Para qué sirve el Garbage Collector?",
     "answers": [
@@ -432,6 +540,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992b0"
+    },
     "intro": "Más vale que esto te suene.",
     "text": "¿Qué es un hilo (thread)?",
     "answers": [
@@ -444,6 +555,9 @@
     "difficulty": "EASY"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992b1"
+    },
     "intro": "Aquí es donde todo se rompe si no sabes lo que haces.",
     "text": "¿Para qué se usa la palabra clave synchronized?",
     "answers": [
@@ -456,6 +570,9 @@
     "difficulty": "MEDIUM"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992b2"
+    },
     "intro": "Cambia de tema, ahora base de datos.",
     "text": "¿Qué es una transacción en una base de datos?",
     "answers": [
@@ -465,9 +582,12 @@
       "Un trigger automático"
     ],
     "correctAnswerIndex": 1,
-    "difficulty": "MEDIUM"
+    "difficulty": "HARD"
   },
   {
+    "_id": {
+      "$oid": "698682900cc7ae6e3dc992b3"
+    },
     "intro": "Última de este bloque. No la líes.",
     "text": "¿Para qué se utilizan los índices en una base de datos?",
     "answers": [
@@ -478,6 +598,173 @@
     ],
     "correctAnswerIndex": 2,
     "difficulty": "EASY"
+  },
+  {
+    "intro": "Aquí ya no valen trucos. O sabes Java… o no.",
+    "text": "¿Qué garantiza exactamente la palabra clave volatile en Java?",
+    "answers": [
+      "Atomicidad de las operaciones",
+      "Visibilidad de los cambios entre hilos",
+      "Bloqueo mutuo entre hilos",
+      "Ejecución más rápida"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Esta separa a los que leen del que ejecuta.",
+    "text": "¿Por qué double-checked locking fue problemático antes de Java 5?",
+    "answers": [
+      "Por falta de sincronización en los constructores",
+      "Por problemas de reordenación de instrucciones en la JVM",
+      "Porque volatile no existía",
+      "Porque synchronized no funcionaba correctamente"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Si no sabes esto, el bug ya está en producción.",
+    "text": "¿Qué ocurre si se sobrescribe equals() pero no hashCode()?",
+    "answers": [
+      "Nada, Java lo corrige automáticamente",
+      "Los objetos pueden comportarse mal en HashMap o HashSet",
+      "El código no compila",
+      "hashCode se hereda correctamente siempre"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Aquí mueren muchos ArrayLists.",
+    "text": "¿En qué caso LinkedList puede ser peor que ArrayList incluso para inserciones?",
+    "answers": [
+      "Cuando se insertan muchos elementos al final",
+      "Cuando hay accesos frecuentes por índice",
+      "Cuando se usa un iterador",
+      "Nunca, LinkedList siempre es mejor para insertar"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "No todo lo que compila es buena idea.",
+    "text": "¿Por qué HashMap no es thread-safe?",
+    "answers": [
+      "Porque no usa synchronized",
+      "Porque puede entrar en bucles infinitos en concurrencia",
+      "Porque no soporta múltiples hilos",
+      "Porque lanza ConcurrentModificationException siempre"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Aquí empieza el dolor de verdad.",
+    "text": "¿Qué zona de memoria usa la JVM para almacenar metadatos de clases (Java 8+)?",
+    "answers": [
+      "Heap",
+      "Stack",
+      "Metaspace",
+      "PermGen"
+    ],
+    "correctAnswerIndex": 2,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Si fallas esta, no toques el GC.",
+    "text": "¿Qué provoca más fácilmente un OutOfMemoryError?",
+    "answers": [
+      "Muchas variables locales",
+      "Referencias persistentes a objetos no usados",
+      "Muchos métodos estáticos",
+      "Uso excesivo de threads"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Esta es de diseño, no de memoria.",
+    "text": "¿Por qué no se recomienda capturar Exception genérico?",
+    "answers": [
+      "Porque no compila",
+      "Porque oculta errores específicos y dificulta el debugging",
+      "Porque consume más memoria",
+      "Porque obliga a relanzar la excepción"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Diseño orientado a objetos de verdad.",
+    "text": "¿Cuándo es preferible composición frente a herencia?",
+    "answers": [
+      "Cuando se necesita reutilizar código rápidamente",
+      "Cuando la relación no es claramente \"es-un\"",
+      "Cuando hay muchos métodos abstractos",
+      "Cuando la clase padre es final"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Bienvenido al backend real.",
+    "text": "¿Qué problema principal resuelve la inyección de dependencias en Spring?",
+    "answers": [
+      "Mejorar el rendimiento",
+      "Reducir el acoplamiento entre clases",
+      "Evitar excepciones",
+      "Eliminar constructores"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Si has usado Spring Boot, deberías saber esto.",
+    "text": "¿Qué diferencia principal hay entre @Component y @Bean?",
+    "answers": [
+      "@Bean no se puede usar en Spring Boot",
+      "@Component se detecta por escaneo y @Bean se define manualmente",
+      "@Bean solo sirve para interfaces",
+      "No hay ninguna diferencia"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Aquí ya no juegas solo.",
+    "text": "¿Qué problema soluciona la clase ConcurrentHashMap?",
+    "answers": [
+      "Bloqueos globales",
+      "Accesos concurrentes sin bloquear toda la estructura",
+      "Inserciones duplicadas",
+      "Problemas de serialización"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Si no sabes esto, el deadlock ya existe.",
+    "text": "¿Qué es un deadlock?",
+    "answers": [
+      "Un hilo bloqueado temporalmente",
+      "Dos o más hilos esperando indefinidamente recursos entre sí",
+      "Un error de compilación",
+      "Un problema de rendimiento"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
+  },
+  {
+    "intro": "Última. Aquí se decide todo.",
+    "text": "¿Por qué String es inmutable en Java?",
+    "answers": [
+      "Para mejorar el rendimiento",
+      "Por seguridad, caché y uso en el pool de strings",
+      "Porque no se puede heredar",
+      "Porque evita el uso de equals()"
+    ],
+    "correctAnswerIndex": 1,
+    "difficulty": "HARD"
   }
 ]
-
