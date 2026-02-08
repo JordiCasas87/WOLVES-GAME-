@@ -13,6 +13,7 @@ function Result({ onRestart, result }) {
 
   const playWithSound = (video) => {
     video.muted = false;
+    video.volume = 0.8;
     video.currentTime = 0;
     const attempt = video.play();
     if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
@@ -39,6 +40,9 @@ function Result({ onRestart, result }) {
                 role="button"
                 tabIndex={0}
                 aria-label="Reproducir vídeo del resultado con sonido"
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.volume = 0.8;
+                }}
                 onClick={(e) => playWithSound(e.currentTarget)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {

@@ -7,6 +7,7 @@ import Result from "./pages/Result";
 import Stats from "./pages/Stats";
 import Admin from "./pages/Admin";
 import Credits from "./pages/Credits";
+import GameInfo from "./pages/GameInfo";
 
 const crashMusicUrl = new URL("./assets/sounds/Crash.mp3", import.meta.url).href;
 const elevatorMusicUrl = new URL("./assets/sounds/Elevator.mp3", import.meta.url).href;
@@ -27,9 +28,11 @@ function App() {
   const bgMusicMode =
     screen === "menu" || screen === "stats" || screen === "admin"
       ? "low"
-      : screen === "login" || screen === "credits"
+      : screen === "login" || screen === "credits" || screen === "gameInfo"
         ? "full"
         : "off";
+  const bgMusicVolume =
+    bgMusicMode === "low" ? 0.5 : bgMusicMode === "full" ? 1 : 0;
   const isElevatorActive = screen === "game";
 
   useEffect(() => {
@@ -47,7 +50,7 @@ function App() {
       return undefined;
     }
 
-    audio.volume = bgMusicMode === "low" ? 0.08 : 0.22;
+    audio.volume = bgMusicVolume;
 
     const tryPlay = () => {
       const attempt = audio.play();
@@ -68,7 +71,7 @@ function App() {
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
     };
-  }, [bgMusicMode]);
+  }, [bgMusicVolume, bgMusicMode]);
 
   useEffect(() => {
     const audio = elevatorMusicRef.current;
@@ -101,10 +104,12 @@ function App() {
     };
   }, [isElevatorActive]);
 
+  const isLoginScreens = screen === "login" || screen === "credits" || screen === "gameInfo";
+
   const playNaviSfx = () => {
     const audio = naviSfxRef.current;
     if (!audio) return;
-    audio.volume = 0.45;
+    audio.volume = isLoginScreens ? bgMusicVolume : 0.45;
     audio.currentTime = 0;
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
@@ -113,7 +118,7 @@ function App() {
   const playRoarSfx = () => {
     const audio = roarSfxRef.current;
     if (!audio) return;
-    audio.volume = 0.7;
+    audio.volume = isLoginScreens ? bgMusicVolume : 0.7;
     audio.currentTime = 0;
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
@@ -128,6 +133,7 @@ function App() {
     content = (
       <Login
         onLoginSuccess={() => setScreen("menu")}
+        onGameInfo={() => setScreen("gameInfo")}
         onCredits={() => {
           if (naviSfxTimeoutRef.current) window.clearTimeout(naviSfxTimeoutRef.current);
           naviSfxTimeoutRef.current = window.setTimeout(() => {
@@ -203,6 +209,10 @@ function App() {
         }}
       />
     );
+  }
+
+  if (screen === "gameInfo") {
+    content = <GameInfo onBack={() => setScreen("login")} />;
   }
 
   if (!content) return null;

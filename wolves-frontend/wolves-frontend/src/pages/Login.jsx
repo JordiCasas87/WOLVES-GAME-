@@ -95,7 +95,7 @@ function wrapOffset(index, activeIndex, length) {
   return diff;
 }
 
-function Login({ onLoginSuccess, onCredits }) {
+function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   const [mode, setMode] = useState("choose"); // choose | login | character | signup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -329,14 +329,25 @@ function Login({ onLoginSuccess, onCredits }) {
 	            </form>
 	          )}
 
-            <button
-              className="credits-btn"
-              type="button"
-              onClick={onCredits}
-              disabled={isSubmitting}
-            >
-              CREDITS Don&apos;t push
-            </button>
+            <div className="login-aux-buttons">
+              <button
+                className="credits-btn game-btn"
+                type="button"
+                onClick={onGameInfo}
+                disabled={isSubmitting}
+              >
+                El juego
+              </button>
+
+              <button
+                className="credits-btn game-btn"
+                type="button"
+                onClick={onCredits}
+                disabled={isSubmitting}
+              >
+                Credits
+              </button>
+            </div>
 	        </div>
 	      )}
 

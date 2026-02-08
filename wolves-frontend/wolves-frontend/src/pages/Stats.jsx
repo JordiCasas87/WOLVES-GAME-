@@ -56,11 +56,11 @@ function Stats({ onBack, onBackToLogin }) {
               <strong>{me.level ?? "-"}</strong>
             </div>
             <div className="stats-row">
-              <span>Dinero</span>
+              <span>Ganancias</span>
               <strong>{me.money ?? "-"}</strong>
             </div>
             <div className="stats-row">
-              <span>Partidas</span>
+              <span>Entrevistas realizadas</span>
               <strong>{me.gamesPlayed ?? "-"}</strong>
             </div>
           </section>
@@ -68,7 +68,7 @@ function Stats({ onBack, onBackToLogin }) {
 
         {!isLoading && (
           <section className="stats-card" aria-label="Ranking">
-            <h3 className="stats-subtitle">Top 10</h3>
+            <h3 className="stats-subtitle">Top 10 (Ganancias)</h3>
             {ranking.length === 0 ? (
               <p className="helper-text">Sin datos de ranking.</p>
             ) : (

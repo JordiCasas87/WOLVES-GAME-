@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const creditsVideoUrl = new URL("../assets/animaciones/creditsVideo.mp4", import.meta.url).href;
 
 function Credits({ onBack }) {
   const [showText, setShowText] = useState(false);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const onKeyDown = (e) => {
@@ -19,13 +20,35 @@ function Credits({ onBack }) {
     return () => window.clearTimeout(id);
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const start = () => {
+      try {
+        video.currentTime = 0.5;
+      } catch {
+        // Some browsers may block seeks before metadata is ready.
+      }
+      const attempt = video.play();
+      if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+    };
+
+    if (video.readyState >= 1) start();
+    else video.addEventListener("loadedmetadata", start, { once: true });
+
+    return () => {
+      video.removeEventListener("loadedmetadata", start);
+    };
+  }, []);
+
   return (
     <div className="screen login-screen credits-page">
       <div className="login-bg" aria-hidden="true">
         <video
+          ref={videoRef}
           className="login-bg-video"
           src={creditsVideoUrl}
-          autoPlay
           muted
           playsInline
           preload="auto"
@@ -71,9 +94,11 @@ function Credits({ onBack }) {
           </ul>
         </div>
 
-        <button className="credits-close" type="button" onClick={onBack}>
-          Volver
-        </button>
+        {showText && (
+          <button className="credits-close" type="button" onClick={onBack}>
+            Volver
+          </button>
+        )}
       </div>
     </div>
   );
