@@ -1,9 +1,6 @@
 package com.jordi.wolves.wolves_api.player.controller;
 
-import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
-import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
-import com.jordi.wolves.wolves_api.player.dto.PlayerMeDto;
-import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
+import com.jordi.wolves.wolves_api.player.dto.*;
 import com.jordi.wolves.wolves_api.player.service.PlayerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -64,10 +61,13 @@ public class PlayerController {
         return playerService.getMe(authentication);
     }
 
-    // TODO: Endpoint disponible cuando se implemente JWT
-// @GetMapping("/me")
-// public PlayerDtoResponse getMyPlayer(Authentication authentication) {
-//     // El player se obtendrá a partir del usuario autenticado (JWT)
-// }
+
+    @PutMapping("/players/{id}")
+    public ResponseEntity<PlayerDtoResponse> updatePlayerByAdmin(
+            @PathVariable String id,
+            @RequestBody PlayerAdminUpdateDto dto
+    ) {
+        return ResponseEntity.ok(playerService.updateByAdmin(id, dto));
+    }
 
 }

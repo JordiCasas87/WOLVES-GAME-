@@ -48,11 +48,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/players").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/players/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/questions/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/questions").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/players/**").hasRole("ADMIN")
 
                         // Juego (USER y ADMIN)
                         .requestMatchers("/game/**").hasAnyRole("USER", "ADMIN")
 
-                        // 5. Cualquier otra cosa
+                        // Cualquier otra cosa
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

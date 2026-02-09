@@ -1,4 +1,5 @@
 package com.jordi.wolves.wolves_api.question.service;
+import com.jordi.wolves.wolves_api.question.dto.QuestionAdminListDto;
 import com.jordi.wolves.wolves_api.question.exception.QuestionNotFoundException;
 
 
@@ -61,6 +62,17 @@ public class QuestionService {
             throw new QuestionNotFoundException("Question not found with id: " + id);
         }
         questionRepository.deleteById(id);
+    }
+
+    public List<QuestionAdminListDto> getAllQuestionsForAdmin() {
+
+        return questionRepository.findAll()
+                .stream()
+                .map(q -> new QuestionAdminListDto(
+                        q.getId(),
+                        q.getText()
+                ))
+                .toList();
     }
 
 }

@@ -181,6 +181,7 @@ function App() {
   if (screen === "result") {
     content = (
       <Result
+        mode={gameMode}
         result={gameResult}
         onRestart={() => {
           setGameResult(null);

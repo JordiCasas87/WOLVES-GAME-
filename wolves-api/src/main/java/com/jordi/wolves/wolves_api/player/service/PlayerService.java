@@ -1,9 +1,6 @@
 package com.jordi.wolves.wolves_api.player.service;
 
-import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
-import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
-import com.jordi.wolves.wolves_api.player.dto.PlayerMeDto;
-import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
+import com.jordi.wolves.wolves_api.player.dto.*;
 import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
 import com.jordi.wolves.wolves_api.player.mapper.PlayerMapper;
 import com.jordi.wolves.wolves_api.player.model.Player;
@@ -109,10 +106,35 @@ public class PlayerService {
         return playerMapper.toMeDto(player);
     }
 
-    // Se usará cuando exista autenticación JWT
-// public Player getPlayerByUsername(String username) {
-//     return playerRepo.findByUsername(username)
-//             .orElseThrow(() -> new PlayerNotFoundException(username));
-// }
+
+    public PlayerDtoResponse updateByAdmin(String playerId, PlayerAdminUpdateDto dto) {
+
+        Player player = playerRepo.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException("Player not found"));
+
+        if (dto.name() != null) {
+            player.setName(dto.name());
+        }
+
+        if (dto.age() != null) {
+            player.setAge(dto.age());
+        }
+
+        if (dto.level() != null) {
+            player.setLevel(dto.level());
+        }
+
+        if (dto.money() != null) {
+            player.setMoney(dto.money());
+        }
+
+        if (dto.role() != null) {
+            player.setRole(dto.role());
+        }
+
+        Player updatedPlayer = playerRepo.save(player);
+
+        return playerMapper.toDto(updatedPlayer);
+    }
 
 }

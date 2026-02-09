@@ -3,13 +3,20 @@ import { useMemo, useState } from "react";
 const wolfWinVideoUrl = new URL("../assets/animaciones/loboGanas.mp4", import.meta.url).href;
 const wolfLoseVideoUrl = new URL("../assets/animaciones/loboPierdes.mp4", import.meta.url).href;
 
-function Result({ onRestart, result }) {
+function Result({ onRestart, result, mode = "new" }) {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   const videoSrc = useMemo(() => {
     if (!result) return "";
     return result.passed ? wolfWinVideoUrl : wolfLoseVideoUrl;
   }, [result]);
+
+  const rewardLabel = useMemo(() => {
+    if (mode === "mistakes") return "Sin recompensa (repaso)";
+    return result?.passed ? "Recompensa" : "Recompensa perdida";
+  }, [mode, result]);
+
+  const rewardValue = result?.reward;
 
   const playWithSound = (video) => {
     video.muted = false;
@@ -71,8 +78,8 @@ function Result({ onRestart, result }) {
                 <strong>{result.passed ? "APROBADO" : "SUSPENSO"}</strong>
               </div>
               <div className="stats-row">
-                <span>Recompensa</span>
-                <strong>{result.reward ?? 0}</strong>
+                <span>{rewardLabel}</span>
+                <strong>{rewardValue == null ? "—" : rewardValue}</strong>
               </div>
             </section>
 

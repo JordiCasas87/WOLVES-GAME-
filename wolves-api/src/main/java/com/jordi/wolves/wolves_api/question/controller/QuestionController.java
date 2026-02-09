@@ -1,5 +1,6 @@
 package com.jordi.wolves.wolves_api.question.controller;
 
+import com.jordi.wolves.wolves_api.question.dto.QuestionAdminListDto;
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoResponse;
 import com.jordi.wolves.wolves_api.question.service.QuestionService;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,15 @@ private QuestionService questionService;
         questionService.deleteQuestionById(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @GetMapping("/questions")
+    public ResponseEntity<List<QuestionAdminListDto>> getAllQuestions() {
+        return ResponseEntity.ok(
+                questionService.getAllQuestionsForAdmin()
+        );
+    }
+
+
 
 }

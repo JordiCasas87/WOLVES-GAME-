@@ -12,6 +12,7 @@ import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
 import com.jordi.wolves.wolves_api.game.mapper.GameMapper;
 import com.jordi.wolves.wolves_api.game.model.Game;
 import com.jordi.wolves.wolves_api.game.repository.GameRepository;
+import com.jordi.wolves.wolves_api.game.wolfText.WolfMessages;
 import com.jordi.wolves.wolves_api.player.model.Player;
 import com.jordi.wolves.wolves_api.player.service.PlayerService;
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoNextResponse;
@@ -167,9 +168,9 @@ public class GameService {
 
         // para dar mensaje al final de la paertida
         if (passed) {
-            finalMessage = "Contratado. No te comeré… por ahora.";
+            finalMessage = WolfMessages.FINAL_PASSED;
         } else {
-            finalMessage = "Muchas gracias, ya te llamaremos. Ha sido un placer… al menos para ti.";
+            finalMessage = WolfMessages.FINAL_FAILED;
         }
 
         return new GameResultDto(
@@ -229,10 +230,8 @@ public class GameService {
     private GameDtoResponse resumeExistingGame(Game game) {
 
         String message = switch (game.getStatus()) {
-            case CREATED ->
-                    "¿Ya te cansas antes de empezar? Empecemos…";
-            case IN_PROGRESS ->
-                    "¿Volvemos a la entrevista que dejaste a medias? Como se nota que esto es ficción…";
+            case CREATED -> WolfMessages.RESUME_CREATED;
+            case IN_PROGRESS -> WolfMessages.RESUME_IN_PROGRESS;
             default -> null;
         };
 
@@ -281,12 +280,12 @@ public class GameService {
         if (correct) {
             return new AnswerResponseDto(
                     true,
-                    "mmm... Correcto, sigamos"
+                    WolfMessages.ANSWER_CORRECT
             );
         } else {
             return new AnswerResponseDto(
                     false,
-                    "Eso no es correcto, estás a un paso de mi sartén"
+                    WolfMessages.ANSWER_INCORRECT
             );
 
         }

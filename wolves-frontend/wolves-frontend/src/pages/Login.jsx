@@ -318,14 +318,14 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
                 {isSubmitting ? "Entrando..." : "Entrar"}
               </button>
 
-	              <button
-	                className="secondary-button"
-	                type="button"
-	                onClick={goChoose}
-	                disabled={isSubmitting}
-	              >
-	                Volver
-	              </button>
+		              <button
+		                className="dungeon-btn"
+		                type="button"
+		                onClick={goChoose}
+		                disabled={isSubmitting}
+		              >
+		                Volver
+		              </button>
 	            </form>
 	          )}
 
