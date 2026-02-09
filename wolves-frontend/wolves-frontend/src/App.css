@@ -932,6 +932,64 @@
   border-radius: 16px;
   border: 1px solid rgba(255, 216, 120, 0.35);
   box-shadow: 0 18px 52px rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+}
+
+.stats-layout.admin-layout {
+  max-width: 480px;
+  gap: 12px;
+  padding: 14px 14px 16px;
+}
+
+.admin-layout .stats-card {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.admin-layout .stats-subtitle {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.admin-layout .text-input {
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.admin-layout .admin-actions {
+  gap: 10px;
+}
+
+.admin-layout .admin-inline {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-layout .admin-inline .text-input {
+  min-width: 0;
+}
+
+.admin-layout .admin-inline .dungeon-btn {
+  width: auto;
+  justify-self: end;
+  padding: 10px 14px;
+  white-space: nowrap;
+}
+
+.admin-layout .admin-wolf-img {
+  width: min(88vw, 420px);
+  border-radius: 14px;
+}
+
+@media (max-width: 420px) {
+  .admin-layout .admin-inline {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-layout .admin-inline .dungeon-btn {
+    width: 100%;
+  }
 }
 
 .menu-layout.admin-layout {

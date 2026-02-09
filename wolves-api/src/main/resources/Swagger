@@ -3,3 +3,10 @@
 
 //levantar front
 // npm run dev
+
+//Poner colores en las respuestas, augmentar tamaño texto,
+separar respuestas de enunciados
+//Mas dto para tipos de respuestas.
+//No harcodear las respuestas dentro del service.
+//Hacer test de integracion y unitarios.
+// crud de preguntas, añadir tener todas, (pensar en añadir)

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
 
-const adminWolfImgUrl = new URL("../assets/images/loboAdmin.jpg", import.meta.url).href;
+const adminWolfVideoUrl = new URL("../assets/animaciones/loboAdmin.mp4", import.meta.url).href;
+const adminWolfPosterUrl = new URL("../assets/images/loboAdmin.jpg", import.meta.url).href;
 
 function isAdminRole(role) {
   return String(role ?? "").toUpperCase() === "ADMIN";
@@ -14,6 +15,7 @@ function Admin({ onBack }) {
   const [isLoadingPlayers, setIsLoadingPlayers] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [isAdminSoundEnabled, setIsAdminSoundEnabled] = useState(false);
 
   const [deletePlayerId, setDeletePlayerId] = useState("");
   const [deleteQuestionId, setDeleteQuestionId] = useState("");
@@ -91,12 +93,53 @@ function Admin({ onBack }) {
     }
   };
 
+  const toggleAdminVideoSound = (video) => {
+    setIsAdminSoundEnabled((prev) => {
+      const next = !prev;
+      video.muted = !next;
+
+      if (next) {
+        video.volume = 0.65;
+        const attempt = video.play?.();
+        if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+      }
+
+      return next;
+    });
+  };
+
   const canUseAdmin = isAdminRole(me?.role);
 
   return (
     <div className="screen menu-screen menu-screen--softblur">
       <div className="menu-layout stats-layout admin-layout">
-        <img className="admin-wolf-img" src={adminWolfImgUrl} alt="Lobo admin" />
+        <video
+          className="admin-wolf-img"
+          src={adminWolfVideoUrl}
+          autoPlay
+          loop
+          muted={!isAdminSoundEnabled}
+          playsInline
+          preload="metadata"
+          poster={adminWolfPosterUrl}
+          role="button"
+          tabIndex={0}
+          aria-label={
+            isAdminSoundEnabled
+              ? "Silenciar vídeo de administración"
+              : "Activar sonido del vídeo de administración"
+          }
+          onLoadedMetadata={(e) => {
+            e.currentTarget.volume = 0.65;
+          }}
+          onClick={(e) => toggleAdminVideoSound(e.currentTarget)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              toggleAdminVideoSound(e.currentTarget);
+            }
+          }}
+        />
         <h2 className="stats-title">Administración</h2>
 
         {isLoadingMe && <p className="helper-text">Cargando...</p>}
