@@ -6,6 +6,7 @@ public record PlayerMeDto(
         String role,
         int money,
         int gamesPlayed,
-        int level
+        int level,
+        String notes
 ) {
 }

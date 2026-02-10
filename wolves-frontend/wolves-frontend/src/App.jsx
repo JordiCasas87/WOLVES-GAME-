@@ -8,8 +8,10 @@ import Stats from "./pages/Stats";
 import Admin from "./pages/Admin";
 import Credits from "./pages/Credits";
 import GameInfo from "./pages/GameInfo";
+import PlanoSplash from "./pages/PlanoSplash";
+import { clearToken } from "./services/api";
 
-const crashMusicUrl = new URL("./assets/sounds/Crash.mp3", import.meta.url).href;
+const bgMusicUrl = new URL("./assets/sounds/smash.mp3", import.meta.url).href;
 const elevatorMusicUrl = new URL("./assets/sounds/Elevator.mp3", import.meta.url).href;
 const naviSfxUrl = new URL("./assets/sounds/navi.mp3", import.meta.url).href;
 const roarSfxUrl = new URL("./assets/sounds/Roar.mp3", import.meta.url).href;
@@ -19,21 +21,27 @@ function App() {
   const [gameDifficulty, setGameDifficulty] = useState("easy"); // easy | medium | hard
   const [gameMode, setGameMode] = useState("new"); // new | mistakes
   const [gameResult, setGameResult] = useState(null);
+  const [bgMusicDuckMultiplier, setBgMusicDuckMultiplier] = useState(1);
   const bgMusicRef = useRef(null);
   const elevatorMusicRef = useRef(null);
   const naviSfxRef = useRef(null);
   const roarSfxRef = useRef(null);
   const naviSfxTimeoutRef = useRef(null);
 
-  const bgMusicMode =
-    screen === "menu" || screen === "stats" || screen === "admin"
-      ? "low"
-      : screen === "login" || screen === "credits" || screen === "gameInfo"
-        ? "full"
-        : "off";
-  const bgMusicVolume =
-    bgMusicMode === "low" ? 0.5 : bgMusicMode === "full" ? 1 : 0;
+	  const bgMusicMode =
+	    screen === "menu" || screen === "stats" || screen === "admin"
+	      ? "low"
+	      : screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano"
+	        ? "full"
+	        : "off";
+	  const bgMusicVolume =
+	    bgMusicMode === "low" ? 0.18 : bgMusicMode === "full" ? 0.75 : 0;
   const isElevatorActive = screen === "game";
+
+  useEffect(() => {
+    // Ensure we never keep background music ducked when leaving the menu screen.
+    if (screen !== "menu") setBgMusicDuckMultiplier(1);
+  }, [screen]);
 
   useEffect(() => {
     return () => {
@@ -50,7 +58,7 @@ function App() {
       return undefined;
     }
 
-    audio.volume = bgMusicVolume;
+    audio.volume = Math.max(0, Math.min(1, bgMusicVolume * bgMusicDuckMultiplier));
 
     const tryPlay = () => {
       const attempt = audio.play();
@@ -71,7 +79,7 @@ function App() {
       window.removeEventListener("pointerdown", onInteract);
       window.removeEventListener("keydown", onInteract);
     };
-  }, [bgMusicVolume, bgMusicMode]);
+  }, [bgMusicVolume, bgMusicMode, bgMusicDuckMultiplier]);
 
   useEffect(() => {
     const audio = elevatorMusicRef.current;
@@ -104,7 +112,8 @@ function App() {
     };
   }, [isElevatorActive]);
 
-  const isLoginScreens = screen === "login" || screen === "credits" || screen === "gameInfo";
+	  const isLoginScreens =
+	    screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano";
 
   const playNaviSfx = () => {
     const audio = naviSfxRef.current;
@@ -129,15 +138,15 @@ function App() {
 
   let content = null;
 
-  if (screen === "login") {
-    content = (
-      <Login
-        onLoginSuccess={() => setScreen("menu")}
-        onGameInfo={() => setScreen("gameInfo")}
-        onCredits={() => {
-          if (naviSfxTimeoutRef.current) window.clearTimeout(naviSfxTimeoutRef.current);
-          naviSfxTimeoutRef.current = window.setTimeout(() => {
-            playNaviSfx();
+	  if (screen === "login") {
+	    content = (
+	      <Login
+	        onLoginSuccess={() => setScreen("plano")}
+	        onGameInfo={() => setScreen("gameInfo")}
+	        onCredits={() => {
+	          if (naviSfxTimeoutRef.current) window.clearTimeout(naviSfxTimeoutRef.current);
+	          naviSfxTimeoutRef.current = window.setTimeout(() => {
+	            playNaviSfx();
           }, 1000);
           setScreen("credits");
         }}
@@ -145,14 +154,19 @@ function App() {
     );
   }
 
-  if (screen === "menu") {
-    content = (
-      <Menu
-        onNewGame={(difficulty) => {
-          setGameMode("new");
-          setGameDifficulty(difficulty);
-          setScreen("game");
-        }}
+	  if (screen === "menu") {
+	    content = (
+	      <Menu
+	        onDuckBgMusic={(multiplier) => {
+	          const next = Number(multiplier);
+	          if (!Number.isFinite(next)) return;
+	          setBgMusicDuckMultiplier(Math.max(0, Math.min(1, next)));
+	        }}
+	        onNewGame={(difficulty) => {
+	          setGameMode("new");
+	          setGameDifficulty(difficulty);
+	          setScreen("game");
+	        }}
         onMistakesGame={() => {
           setGameMode("mistakes");
           setScreen("game");
@@ -201,26 +215,38 @@ function App() {
     content = <Admin onBack={() => setScreen("menu")} />;
   }
 
-  if (screen === "credits") {
-    content = (
-      <Credits
-        onBack={() => {
-          playRoarSfx();
-          setScreen("login");
-        }}
-      />
-    );
-  }
+	  if (screen === "credits") {
+	    content = (
+	      <Credits
+	        onBack={() => {
+	          playRoarSfx();
+	          setScreen("login");
+	        }}
+	      />
+	    );
+	  }
 
-  if (screen === "gameInfo") {
-    content = <GameInfo onBack={() => setScreen("login")} />;
-  }
+	  if (screen === "plano") {
+	    content = (
+	      <PlanoSplash
+	        onDone={() => setScreen("menu")}
+	        onBack={() => {
+	          clearToken();
+	          setScreen("login");
+	        }}
+	      />
+	    );
+	  }
+
+	  if (screen === "gameInfo") {
+	    content = <GameInfo onBack={() => setScreen("login")} />;
+	  }
 
   if (!content) return null;
 
   return (
     <>
-      <audio ref={bgMusicRef} src={crashMusicUrl} preload="auto" loop aria-hidden="true" />
+      <audio ref={bgMusicRef} src={bgMusicUrl} preload="auto" loop aria-hidden="true" />
       <audio
         ref={elevatorMusicRef}
         src={elevatorMusicUrl}

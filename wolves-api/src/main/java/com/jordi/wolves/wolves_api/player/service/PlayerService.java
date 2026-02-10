@@ -137,4 +137,15 @@ public class PlayerService {
         return playerMapper.toDto(updatedPlayer);
     }
 
+    //nuevo metodo para añadir notas a cada jugador
+    public PlayerMeDto updateMyNotes(Authentication authentication, String notes) {
+        String username = authentication.getName();
+        Player player = loadPlayerByName(username);
+        player.setNotes(notes);
+        playerRepo.save(player);
+        return playerMapper.toMeDto(player);
+    }
+
 }
+
+

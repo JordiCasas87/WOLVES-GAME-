@@ -25,8 +25,8 @@ public class Player implements UserDetails {
     private int level;
     private int gamesPlayed;
     private int money;
+    private String notes = "";
     private List<String> incorrectQuestionsIdList;
-    // Removed constructor with (String id, String name, String password, Role role, int age)
 
     public Player(String name, String password, Role role, int age) {
         this.name = name;
@@ -37,8 +37,18 @@ public class Player implements UserDetails {
         this.level = 0;
         this.gamesPlayed = 0;
         this.money = 0;
+        this.notes = "";
         this.incorrectQuestionsIdList = new ArrayList<>();
     }
+
+    public Player() {
+        this.dateOfCreation = LocalDate.now();
+        this.level = 0;
+        this.gamesPlayed = 0;
+        this.money = 0;
+        this.incorrectQuestionsIdList = new ArrayList<>();
+    }
+
 
     public int getGamesPlayed() {
         return gamesPlayed;
@@ -52,13 +62,6 @@ public class Player implements UserDetails {
         this.gamesPlayed++;
     }
 
-    public Player() {
-        this.dateOfCreation = LocalDate.now();
-        this.level = 0;
-        this.gamesPlayed = 0;
-        this.money = 0;
-        this.incorrectQuestionsIdList = new ArrayList<>();
-    }
 
     public String getId() {
         return id;
@@ -134,6 +137,14 @@ public class Player implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     //metodos añadidos por la interfaz UserDetails

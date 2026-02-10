@@ -289,14 +289,12 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
             </>
           )}
 
-	          {mode === "login" && (
-	            <form className="auth-form" onSubmit={handleLogin}>
-	              <h2 className="auth-title">Iniciar sesion</h2>
-
-              <input
-                className="text-input"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+		          {mode === "login" && (
+		            <form className="auth-form" onSubmit={handleLogin}>
+	              <input
+	                className="text-input"
+	                value={username}
+	                onChange={(e) => setUsername(e.target.value)}
                 placeholder="Usuario"
                 autoComplete="username"
                 disabled={isSubmitting}

@@ -70,4 +70,16 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.updateByAdmin(id, dto));
     }
 
+    //nuevo endpoint para notas
+
+    @PatchMapping("/me/notes")
+    public ResponseEntity<PlayerMeDto> updateMyNotes(
+            Authentication authentication,
+            @RequestBody String notes
+    ) {
+        return ResponseEntity.ok(
+                playerService.updateMyNotes(authentication, notes)
+        );
+    }
+
 }

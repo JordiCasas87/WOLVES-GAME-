@@ -19,7 +19,8 @@ public class PlayerMapper {
                 player.getRole().name(),
                 player.getMoney(),
                 player.getGamesPlayed(),
-                player.getLevel()
+                player.getLevel(),
+                player.getNotes()
         );
     }
 
