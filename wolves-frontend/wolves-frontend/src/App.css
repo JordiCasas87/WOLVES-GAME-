@@ -1028,6 +1028,14 @@
   gap: 8px;
 }
 
+.admin-question-toolbar {
+  margin: 0 0 10px;
+}
+
+.admin-question-search {
+  text-align: left;
+}
+
 .admin-question-item {
   display: grid;
   grid-template-columns: 64px 1fr;

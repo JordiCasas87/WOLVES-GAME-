@@ -8,10 +8,18 @@ function isAdminRole(role) {
   return String(role ?? "").toUpperCase() === "ADMIN";
 }
 
+function normalizeSearchText(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function Admin({ onBack }) {
   const [me, setMe] = useState(null);
   const [players, setPlayers] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [questionSearch, setQuestionSearch] = useState("");
   const [isPlayersOpen, setIsPlayersOpen] = useState(false);
   const [isQuestionsOpen, setIsQuestionsOpen] = useState(false);
   const [isLoadingMe, setIsLoadingMe] = useState(true);
@@ -122,6 +130,12 @@ function Admin({ onBack }) {
     setIsQuestionsOpen(true);
     if (questions.length === 0) await loadQuestions();
   };
+
+  const visibleQuestions = useMemo(() => {
+    const needle = normalizeSearchText(questionSearch).trim();
+    if (!needle) return questions;
+    return questions.filter((question) => normalizeSearchText(question?.text ?? "").includes(needle));
+  }, [questions, questionSearch]);
 
   const openPlayerModal = async (id) => {
     const finalId = String(id ?? "").trim();
@@ -431,8 +445,19 @@ function Admin({ onBack }) {
             {isQuestionsOpen && questions.length > 0 && (
               <section className="stats-card" aria-label="Preguntas">
                 <p className="stats-subtitle">Preguntas</p>
+                <div className="admin-question-toolbar">
+                  <input
+                    className="text-input admin-question-search"
+                    value={questionSearch}
+                    onChange={(e) => setQuestionSearch(e.target.value)}
+                    placeholder="Buscar por palabra en el enunciado..."
+                    autoComplete="off"
+                    aria-label="Buscar preguntas por enunciado"
+                    disabled={isLoadingQuestions}
+                  />
+                </div>
                 <ol className="admin-question-list">
-                  {questions.map((q, idx) => (
+                  {visibleQuestions.map((q, idx) => (
                     <li key={q.id ?? `${idx}`}>
                       <button
                         className="admin-question-item admin-row-btn"
@@ -452,6 +477,9 @@ function Admin({ onBack }) {
                     </li>
                   ))}
                 </ol>
+                {visibleQuestions.length === 0 && (
+                  <p className="error-text">No hay preguntas que coincidan con la búsqueda.</p>
+                )}
               </section>
             )}
 
