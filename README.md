@@ -118,6 +118,13 @@ The frontend UI adapts automatically based on the authenticated user role.
   <img src="admin1.png" width="280" />
 </p>
 
+### 🏗️ Architecture
+
+The backend is organized using a domain-based (feature-based) architecture, where the code is grouped by business domains instead of technical layers. Each domain contains its own controllers, services, repositories, DTOs, mappers and models.
+
+Conceptually, the project follows the MVC pattern: domain entities represent the Model, REST controllers act as the Controller, and the View is implemented separately in a React frontend. MVC is applied logically rather than through a strict folder structure.
+
+The architecture is inspired by Domain-Driven Design (DDD) principles, but keeps a pragmatic and simplified approach suitable for an academic project, focusing on clarity, maintainability and scalability without unnecessary complexity.
 
 ---
 
