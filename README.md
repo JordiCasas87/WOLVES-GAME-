@@ -221,3 +221,42 @@ Design, backend development, game logic, API architecture, security
 and survival against the wolf.
 
 
+⸻
+
+📜 License & Usage Notice
+
+This project (Wolves – The Interview Game) is an academic and creative work developed by Jordi Casas.
+
+All source code, game mechanics, narrative concept, characters, dialogues, and audiovisual ideas are original and are protected by copyright.
+
+Usage conditions
+	•	❌ Commercial use is NOT allowed
+	•	❌ Redistribution of the project or its concept is NOT allowed
+	•	❌ Copying the game idea, mechanics, narrative, or structure for another project is NOT allowed
+	•	❌ Using this project (or parts of it) as the basis for a commercial or public product is NOT allowed
+
+What is allowed
+	•	✅ Viewing the code for educational purposes
+	•	✅ Running the project locally to explore its architecture and functionality
+	•	✅ Studying the implementation as a learning reference
+
+Any use beyond educational or personal learning purposes requires explicit written permission from the author.
+
+⸻
+
+Intellectual Property
+
+This repository contains:
+	•	Original game concept and mechanics
+	•	Custom narrative content and dialogues
+	•	Backend and frontend architecture
+	•	Generated audiovisual assets (used for academic/demo purposes only)
+
+The project is not intended for commercial use at this stage.
+Some audiovisual assets and audio tracks are used as examples only and remain the property of their respective owners.
+
+⸻
+
+© 2026 — Jordi Casas
+Academic project developed at IT Academy
+
