@@ -96,6 +96,7 @@ function wrapOffset(index, activeIndex, length) {
 }
 
 function Login({ onLoginSuccess, onCredits, onGameInfo }) {
+  const [showUi, setShowUi] = useState(false);
   const [mode, setMode] = useState("choose"); // choose | login | character | signup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -108,6 +109,7 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   const dragStartXRef = useRef(null);
   const [isCoverflowPaused, setIsCoverflowPaused] = useState(false);
   const resumeTimeoutRef = useRef(null);
+  const hasRevealedUiRef = useRef(false);
   const characterCount = characters.length;
 
   const clearResumeTimeout = () => {
@@ -209,6 +211,22 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
     setCarouselIndex((i) => (i + 1) % characterCount);
   };
 
+  useEffect(() => {
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (mq?.matches) {
+      setShowUi(true);
+      return undefined;
+    }
+
+    const id = window.setTimeout(() => setShowUi(true), 2000);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  useEffect(() => {
+    if (!showUi) return;
+    hasRevealedUiRef.current = true;
+  }, [showUi]);
+
   useEffect(() => () => clearResumeTimeout(), []);
 
   useEffect(() => {
@@ -227,6 +245,8 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
     return () => window.clearInterval(id);
   }, [mode, isCoverflowPaused, characterCount]);
 
+  const uiEnterClass = showUi && !hasRevealedUiRef.current ? " login-ui-enter" : "";
+
   return (
     <div className="screen login-screen">
       <div className="login-bg" aria-hidden="true">
@@ -243,10 +263,12 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
         </video>
       </div>
 
-	      {mode !== "character" && mode !== "signup" && (
-	        <div className="auth-layout">
-	          <video
-	            className="logo-video"
+      {showUi && (
+        <>
+          {mode !== "character" && mode !== "signup" && (
+            <div className={`auth-layout${uiEnterClass}`}>
+		          <video
+		            className="logo-video"
             src={logoVideoUrl}
             autoPlay
             loop
@@ -350,7 +372,7 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
 	      )}
 
       {mode === "character" && (
-        <div className="character-layout">
+        <div className={`character-layout${uiEnterClass}`}>
           <h2 className="auth-title character-title">Elige tu developer</h2>
 
           {characters.length === 0 ? (
@@ -535,8 +557,8 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
         </div>
       )}
 
-      {mode === "signup" && (
-        <div className="signup-layout">
+	      {mode === "signup" && (
+	        <div className={`signup-layout${uiEnterClass}`}>
           {selectedCharacter && (
             <img
               className={
@@ -617,10 +639,11 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
             </form>
           </div>
         </div>
+	      )}
+        </>
       )}
-
-    </div>
-  );
+	    </div>
+	  );
 }
 
 export default Login;

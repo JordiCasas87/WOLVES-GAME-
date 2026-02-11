@@ -15,6 +15,8 @@ const bgMusicUrl = new URL("./assets/sounds/smash.mp3", import.meta.url).href;
 const elevatorMusicUrl = new URL("./assets/sounds/Elevator.mp3", import.meta.url).href;
 const naviSfxUrl = new URL("./assets/sounds/navi.mp3", import.meta.url).href;
 const roarSfxUrl = new URL("./assets/sounds/Roar.mp3", import.meta.url).href;
+const howlSfxUrl = new URL("./assets/sounds/aullido.mp3", import.meta.url).href;
+const howlSfxRelativeVolume = 0.35;
 
 function App() {
   const [screen, setScreen] = useState("login");
@@ -26,6 +28,7 @@ function App() {
   const elevatorMusicRef = useRef(null);
   const naviSfxRef = useRef(null);
   const roarSfxRef = useRef(null);
+  const howlSfxRef = useRef(null);
   const naviSfxTimeoutRef = useRef(null);
 
 	  const bgMusicMode =
@@ -112,8 +115,14 @@ function App() {
     };
   }, [isElevatorActive]);
 
-	  const isLoginScreens =
+  const isLoginScreens =
 	    screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano";
+
+  const getCurrentBgMusicVolume = () => {
+    const audio = bgMusicRef.current;
+    if (audio && typeof audio.volume === "number") return audio.volume;
+    return Math.max(0, Math.min(1, bgMusicVolume * bgMusicDuckMultiplier));
+  };
 
   const playNaviSfx = () => {
     const audio = naviSfxRef.current;
@@ -132,6 +141,63 @@ function App() {
     const attempt = audio.play();
     if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
   };
+
+  const playHowlSfx = () => {
+    const audio = howlSfxRef.current;
+    if (!audio) return Promise.resolve(false);
+    audio.volume = Math.max(
+      0,
+      Math.min(1, getCurrentBgMusicVolume() * howlSfxRelativeVolume),
+    );
+    audio.currentTime = 0;
+    const attempt = audio.play();
+    if (attempt && typeof attempt.then === "function") {
+      return attempt.then(() => true).catch(() => false);
+    }
+    return Promise.resolve(true);
+  };
+
+  useEffect(() => {
+    if (screen !== "login") return undefined;
+
+    let disposed = false;
+    let didPlay = false;
+    let cleanupInteract = null;
+
+    const onInteract = () => {
+      if (disposed || didPlay) return;
+      playHowlSfx().then((ok) => {
+        if (disposed) return;
+        if (ok) didPlay = true;
+      });
+    };
+
+    const id = window.setTimeout(() => {
+      if (disposed || didPlay) return;
+
+      playHowlSfx().then((ok) => {
+        if (disposed) return;
+        if (ok) {
+          didPlay = true;
+          return;
+        }
+
+        // If autoplay is blocked, try once on next user interaction.
+        window.addEventListener("pointerdown", onInteract, { once: true });
+        window.addEventListener("keydown", onInteract, { once: true });
+        cleanupInteract = () => {
+          window.removeEventListener("pointerdown", onInteract);
+          window.removeEventListener("keydown", onInteract);
+        };
+      });
+    }, 3000);
+
+    return () => {
+      disposed = true;
+      window.clearTimeout(id);
+      if (cleanupInteract) cleanupInteract();
+    };
+  }, [screen]);
 
   const footerText =
     "Developed as part of an academic project. Original concept, design & layout: Jordi Casas.";
@@ -256,6 +322,7 @@ function App() {
       />
       <audio ref={naviSfxRef} src={naviSfxUrl} preload="auto" aria-hidden="true" />
       <audio ref={roarSfxRef} src={roarSfxUrl} preload="auto" aria-hidden="true" />
+      <audio ref={howlSfxRef} src={howlSfxUrl} preload="auto" aria-hidden="true" />
       {content}
       <footer className="page-footer">{footerText}</footer>
     </>

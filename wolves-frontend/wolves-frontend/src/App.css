@@ -59,14 +59,38 @@
   z-index: 2;
 }
 
+@keyframes loginUiIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.login-ui-enter {
+  animation: loginUiIn 520ms ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-ui-enter {
+    animation: none;
+  }
+}
+
 .plano-screen {
+  --plano-pad: clamp(12px, 3vw, 24px);
   position: relative;
   overflow: hidden;
   isolation: isolate;
   background: #000;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding: var(--plano-pad);
+  height: 100vh;
+  height: 100svh;
 }
 
 .plano-screen::before {
@@ -95,7 +119,8 @@
 }
 
 .plano-card {
-  width: min(92vw, 760px);
+  width: fit-content;
+  max-width: min(92vw, 760px);
   padding: 0;
   border: none;
   background: transparent;
@@ -123,7 +148,7 @@
 .plano-back-btn {
   position: absolute;
   left: 50%;
-  bottom: 34px;
+  bottom: 24px;
   transform: translateX(-50%);
   z-index: 4;
 
@@ -193,9 +218,12 @@
 }
 
 .plano-img {
-  width: 100%;
+  width: auto;
   height: auto;
   display: block;
+  max-width: min(92vw, 760px);
+  max-height: calc(100vh - (var(--plano-pad) + var(--plano-pad)));
+  max-height: calc(100svh - (var(--plano-pad) + var(--plano-pad)));
   position: relative;
   z-index: 0;
 }
