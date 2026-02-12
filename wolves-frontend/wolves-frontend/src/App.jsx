@@ -118,12 +118,6 @@ function App() {
   const isLoginScreens =
 	    screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano";
 
-  const getCurrentBgMusicVolume = () => {
-    const audio = bgMusicRef.current;
-    if (audio && typeof audio.volume === "number") return audio.volume;
-    return Math.max(0, Math.min(1, bgMusicVolume * bgMusicDuckMultiplier));
-  };
-
   const playNaviSfx = () => {
     const audio = naviSfxRef.current;
     if (!audio) return;
@@ -142,21 +136,6 @@ function App() {
     if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
   };
 
-  const playHowlSfx = () => {
-    const audio = howlSfxRef.current;
-    if (!audio) return Promise.resolve(false);
-    audio.volume = Math.max(
-      0,
-      Math.min(1, getCurrentBgMusicVolume() * howlSfxRelativeVolume),
-    );
-    audio.currentTime = 0;
-    const attempt = audio.play();
-    if (attempt && typeof attempt.then === "function") {
-      return attempt.then(() => true).catch(() => false);
-    }
-    return Promise.resolve(true);
-  };
-
   useEffect(() => {
     if (screen !== "login") return undefined;
 
@@ -164,9 +143,24 @@ function App() {
     let didPlay = false;
     let cleanupInteract = null;
 
+    const playHowlOnce = () => {
+      const audio = howlSfxRef.current;
+      if (!audio) return Promise.resolve(false);
+
+      const bgVol = bgMusicRef.current?.volume ?? 0;
+      audio.volume = Math.max(0, Math.min(1, bgVol * howlSfxRelativeVolume));
+      audio.currentTime = 0;
+
+      const attempt = audio.play();
+      if (attempt && typeof attempt.then === "function") {
+        return attempt.then(() => true).catch(() => false);
+      }
+      return Promise.resolve(true);
+    };
+
     const onInteract = () => {
       if (disposed || didPlay) return;
-      playHowlSfx().then((ok) => {
+      playHowlOnce().then((ok) => {
         if (disposed) return;
         if (ok) didPlay = true;
       });
@@ -175,7 +169,7 @@ function App() {
     const id = window.setTimeout(() => {
       if (disposed || didPlay) return;
 
-      playHowlSfx().then((ok) => {
+      playHowlOnce().then((ok) => {
         if (disposed) return;
         if (ok) {
           didPlay = true;

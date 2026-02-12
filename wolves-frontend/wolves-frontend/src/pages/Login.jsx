@@ -154,6 +154,11 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
       return;
     }
 
+    if (password.length < 6) {
+      setError("La contrasena debe tener al menos 6 caracteres.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await login({ name: username.trim(), password });
@@ -190,11 +195,21 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
       return;
     }
 
+    if (password.length < 6) {
+      setError("La contrasena debe tener al menos 6 caracteres.");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       await register({ name: username.trim(), password, age: ageNumber });
       onLoginSuccess();
     } catch (err) {
+      const status = err && typeof err === "object" ? err.status : null;
+      if (status === 409) {
+        setError("Ese nombre de usuario ya existe.");
+        return;
+      }
       setError(err instanceof Error ? err.message : "Error al crear el usuario.");
     } finally {
       setIsSubmitting(false);
