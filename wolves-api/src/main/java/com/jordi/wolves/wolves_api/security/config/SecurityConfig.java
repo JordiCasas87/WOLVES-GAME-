@@ -56,10 +56,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/questions/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/questions").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/players/**").hasRole("ADMIN")
+                        .requestMatchers("/me/**").hasAnyRole("USER", "ADMIN")
 
                         // Juego (USER y ADMIN)
-                        .requestMatchers(HttpMethod.PATCH, "/me/notes")
-                        .hasAnyRole("USER", "ADMIN")
+                        //.requestMatchers(HttpMethod.PATCH, "/me/notes")
+                        //.hasAnyRole("USER", "ADMIN")
 
                         .requestMatchers("/game/**").hasAnyRole("USER", "ADMIN")
 
