@@ -58,6 +58,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/players/**").hasRole("ADMIN")
 
                         // Juego (USER y ADMIN)
+                        .requestMatchers(HttpMethod.PATCH, "/me/notes")
+                        .hasAnyRole("USER", "ADMIN")
+
                         .requestMatchers("/game/**").hasAnyRole("USER", "ADMIN")
 
                         // Cualquier otra cosa
