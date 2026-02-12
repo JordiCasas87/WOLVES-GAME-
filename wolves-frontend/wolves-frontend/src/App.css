@@ -1681,6 +1681,16 @@
   border-color: rgba(52, 108, 92, 0.65);
 }
 
+@media (max-width: 460px) {
+  .character-carousel {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-arrow {
+    display: none;
+  }
+}
+
 .coverflow-stage {
   border-radius: 16px;
   border: 1px solid rgba(100, 116, 100, 0.35);

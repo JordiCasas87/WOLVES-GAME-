@@ -63,7 +63,7 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
     setNotesError("");
 
     try {
-      await apiRequest("/me/notes", { method: "PATCH", body: sanitizedNotes });
+      await apiRequest("/me/notes", { method: "PATCH", body: { notes: sanitizedNotes } });
       lastSavedNotesRef.current = sanitizedNotes;
       setNotes(sanitizedNotes);
       setNotesDraft(sanitizedNotes);
