@@ -86,8 +86,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                "http://localhost:5173"
-                // aquí añadirás luego el dominio del front en Render
+                "http://localhost:5173",
+                "https://wolves-game-front.onrender.com"
         ));
 
         config.setAllowedMethods(List.of(
