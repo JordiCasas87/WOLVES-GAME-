@@ -16,14 +16,4 @@ public class QuestionMapper {
         );
     }
 
-   /* public Question toEntity(QuestionDtoResponse questionDtoResponse) { // comentar?
-
-        return  new Question(null, questionDtoResponse.intro(),
-                questionDtoResponse.text(),
-                questionDtoResponse.answers(),
-                -1,
-                null);
-    }
-*/
-
 }

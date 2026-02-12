@@ -33,14 +33,11 @@ private QuestionService questionService;
         return ResponseEntity.noContent().build();
     }
 
-
     @GetMapping("/questions")
     public ResponseEntity<List<QuestionAdminListDto>> getAllQuestions() {
         return ResponseEntity.ok(
                 questionService.getAllQuestionsForAdmin()
         );
     }
-
-
 
 }

@@ -25,13 +25,11 @@ public class PlayerController {
         return new ResponseEntity<>(newPlayerDto, HttpStatus.CREATED);
     }
 
-
     @GetMapping("/players/{id}")
     public ResponseEntity<PlayerDtoResponse> getPlayerById ( @PathVariable String id ){
         PlayerDtoResponse dtoPlayer =playerService.getPlayerById(id);
         return new ResponseEntity<>(dtoPlayer, HttpStatus.OK);
     }
-
 
    @GetMapping("/players")
     public ResponseEntity <List<PlayerDtoResponse>> getAllPlayers () {
@@ -41,26 +39,21 @@ public class PlayerController {
         return new ResponseEntity<>(allPlayerList, HttpStatus.OK);
     }
 
-
-
     @DeleteMapping ("/players/{id}")
     public ResponseEntity <Void> deletePlayerById ( @PathVariable String id ){
         playerService.deletePlayerById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
     @GetMapping("/players/ranking")
     public List<PlayerRankingDto> getRanking() {
         return playerService.getRanking();
     }
 
-
     @GetMapping("/me")
     public PlayerMeDto getMe(Authentication authentication) {
         return playerService.getMe(authentication);
     }
-
 
     @PutMapping("/players/{id}")
     public ResponseEntity<PlayerDtoResponse> updatePlayerByAdmin(
@@ -69,8 +62,6 @@ public class PlayerController {
     ) {
         return ResponseEntity.ok(playerService.updateByAdmin(id, dto));
     }
-
-    //nuevo endpoint para notas
 
     @PatchMapping("/me/notes")
     public ResponseEntity<PlayerMeDto> updateMyNotes(

@@ -1,8 +1,6 @@
 package com.jordi.wolves.wolves_api.question.service;
 import com.jordi.wolves.wolves_api.question.dto.QuestionAdminListDto;
 import com.jordi.wolves.wolves_api.question.exception.QuestionNotFoundException;
-
-
 import com.jordi.wolves.wolves_api.question.dto.QuestionDtoResponse;
 import com.jordi.wolves.wolves_api.question.enums.Difficulty;
 import com.jordi.wolves.wolves_api.question.mapper.QuestionMapper;
@@ -37,7 +35,6 @@ public class QuestionService {
                 .toList();
     }
 
-
     public List<Question> getRandomQuestionEntitiesByDifficulty(Difficulty difficulty) {
         List<Question> questions = questionRepository.findByDifficulty(difficulty);
         Collections.shuffle(questions);
@@ -45,7 +42,6 @@ public class QuestionService {
                 .limit(QUESTIONS_PER_GAME)
                 .toList();
     }
-
 
     public List<Question> getRandomQuestionsByIds(List<String> ids, int amount) {
 

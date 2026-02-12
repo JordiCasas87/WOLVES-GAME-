@@ -49,7 +49,6 @@ public class Player implements UserDetails {
         this.incorrectQuestionsIdList = new ArrayList<>();
     }
 
-
     public int getGamesPlayed() {
         return gamesPlayed;
     }
@@ -61,7 +60,6 @@ public class Player implements UserDetails {
     public void incrementGamesPlayed () {
         this.gamesPlayed++;
     }
-
 
     public String getId() {
         return id;
@@ -148,7 +146,6 @@ public class Player implements UserDetails {
     }
 
     //metodos añadidos por la interfaz UserDetails
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

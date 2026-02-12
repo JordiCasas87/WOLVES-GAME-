@@ -51,7 +51,6 @@ public class PlayerService {
                .toList();
 
        return allDtoPlayers;
-
     }
 
     public void deletePlayerById ( String id){
@@ -106,7 +105,6 @@ public class PlayerService {
         return playerMapper.toMeDto(player);
     }
 
-
     public PlayerDtoResponse updateByAdmin(String playerId, PlayerAdminUpdateDto dto) {
 
         Player player = playerRepo.findById(playerId)
@@ -137,7 +135,6 @@ public class PlayerService {
         return playerMapper.toDto(updatedPlayer);
     }
 
-    //nuevo metodo para añadir notas a cada jugador
     public PlayerMeDto updateMyNotes(Authentication authentication, String notes) {
         String username = authentication.getName();
         Player player = loadPlayerByName(username);

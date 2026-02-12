@@ -11,15 +11,10 @@ public class Question {
 
     @Id
     private String id;
-
     private String intro;
-
     private String text;
-
     private List<String> answers;
-
     private int correctAnswerIndex;
-
     private Difficulty difficulty;
 
     public Question(String id,

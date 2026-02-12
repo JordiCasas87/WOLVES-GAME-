@@ -85,11 +85,10 @@ public class GameService {
         Game gameFinded = gameRepo.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found!"));
 
-        //cambiar estado aqui?
         if (gameFinded.getStatus() == GameStatus.CREATED) {
             gameFinded.setStatus(GameStatus.IN_PROGRESS);
         }
-        //si esta acabado que no se vuelva a pedir un pregunta mas o dará error
+
         if (gameFinded.getStatus() == GameStatus.FINISHED) {
             throw new GameLastQuestionException("The game is already finished");
         }
@@ -97,7 +96,6 @@ public class GameService {
         List<Question> gameQuestions = gameFinded.getQuestions();
         int currentIndex = gameFinded.getCurrentQuestionIndex(); //0
 
-        // Si hay una pregunta pendiente de responder, devolverla de nuevo
         if (gameFinded.isAwaitingAnswer()) {
             Question pendingQuestion = gameQuestions.get(currentIndex - 1);
             return new QuestionDtoNextResponse(
@@ -108,7 +106,6 @@ public class GameService {
             );
         }
 
-        //para detener la partida llegado a 10.
         if (currentIndex >= gameQuestions.size()) {
             throw new GameLastQuestionException("No more questions in this game");
         }
@@ -116,7 +113,7 @@ public class GameService {
         Question nextQuestion = gameQuestions.get(currentIndex);
         gameFinded.setCurrentQuestionIndex(currentIndex + 1); //1
 
-        gameFinded.setAwaitingAnswer(true); //evitar respuestas repetidas
+        gameFinded.setAwaitingAnswer(true);
 
         gameRepo.save(gameFinded);
 
@@ -128,7 +125,6 @@ public class GameService {
 
     }
 
-
     public AnswerResponseDto answerQuestion(String gameId, AnswerRequestDto dtoRequest) {
 
         Game gameFinded = gameRepo.findById(gameId)
@@ -138,7 +134,6 @@ public class GameService {
             throw new GameAlreadyFinishedException("The game is already finished");
         }
 
-        //evita que se repitan respuesrtas
         if (!gameFinded.isAwaitingAnswer()) {
             throw new GameNoQuestionAsked("No question to answer right now");
         }
@@ -150,7 +145,6 @@ public class GameService {
 
 
         updateGameAfterAnswer(gameFinded, answeredQuestion, correct);
-
         return buildResponse(correct);
 
     }
@@ -166,7 +160,6 @@ public class GameService {
         }
         boolean passed = game.getScore() >= 6;
 
-        // para dar mensaje al final de la paertida
         if (passed) {
             finalMessage = WolfMessages.FINAL_PASSED;
         } else {
@@ -182,7 +175,6 @@ public class GameService {
                 game.getReward(),
                 finalMessage
         );
-
     }
 
     public GameDtoResponse createGameWithMistakes(Authentication authentication) {
@@ -225,8 +217,6 @@ public class GameService {
         return gameMapper.toDto(savedGame);
     }
 
-
-    //métodos para esta clase.
     private GameDtoResponse resumeExistingGame(Game game) {
 
         String message = switch (game.getStatus()) {
@@ -257,9 +247,8 @@ public class GameService {
 
         } else {
             registerIncorrectQuestion(game, question);
-        } // guardar respuestas erroneas para modo juego solo con preguntas falladas
+        }
 
-        // para terminar partida cuando llega a 10
         if (game.getCurrentQuestionIndex() == game.getQuestions().size()) {
             game.setStatus(GameStatus.FINISHED);
             finishGame(game); //actualizamos player
@@ -270,11 +259,9 @@ public class GameService {
     }
 
     private void registerIncorrectQuestion(Game game, Question question) {
-        //refactorizado para llamar a player service
         Player player = playerService.loadPlayer(game.getPlayerId());
         playerService.registerIncorrectQuestion(player, question.getId());
     }
-
 
     private AnswerResponseDto buildResponse(boolean correct) {
         if (correct) {
@@ -287,7 +274,6 @@ public class GameService {
                     false,
                     WolfMessages.ANSWER_INCORRECT
             );
-
         }
     }
 
@@ -298,7 +284,6 @@ public class GameService {
         playerService.applyGameResult(player, game.getReward(), passed);
 
     }
-
 }
 
 
