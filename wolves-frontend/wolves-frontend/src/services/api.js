@@ -1,3 +1,5 @@
+
+const API_URL = import.meta.env.VITE_API_URL;
 const TOKEN_KEY = "wolves_token";
 
 export function getToken() {
@@ -95,7 +97,8 @@ export async function apiRequest(
     if (token) finalHeaders.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(path, {
+  //const res = await fetch(path, {
+  const res = await fetch(`${API_URL}${path}`, {
     method,
     headers: finalHeaders,
     body: body === undefined ? undefined : JSON.stringify(body),
