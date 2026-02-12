@@ -41,7 +41,6 @@ public class Game {
     public Game() {
     }
 
-
     public boolean isAwaitingAnswer() {
         return awaitingAnswer;
     }

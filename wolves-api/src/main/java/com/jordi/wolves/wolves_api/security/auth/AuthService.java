@@ -32,6 +32,11 @@ public class AuthService {
     }
 
     public AuthResponse register(PlayerDtoRequest request) {
+
+        if (repository.findByName(request.name()).isPresent()) {
+            throw new IllegalStateException("Username already exists");
+        }
+
         Player player = playerMapper.toEntity(request);
         player.setPassword(passwordEncoder.encode(request.password()));
         repository.save(player);

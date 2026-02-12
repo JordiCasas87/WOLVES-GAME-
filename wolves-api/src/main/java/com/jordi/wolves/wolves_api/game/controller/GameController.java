@@ -22,7 +22,6 @@ public class GameController {
         this.gameService = gameService;
     }
 
-
     @PostMapping("/game/new")
     public ResponseEntity<GameDtoResponse> createGame(@RequestParam Difficulty difficulty, Authentication authentication) {
         GameDtoResponse dtoGameOut = gameService.createGame(authentication, difficulty);

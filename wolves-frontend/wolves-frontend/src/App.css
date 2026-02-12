@@ -2659,3 +2659,35 @@
     font-size: 11px;
   }
 }
+
+/* Wolf cursor (opt-in via <body class="wolf-cursor"> in index.html) */
+body.wolf-cursor {
+  --wolf-cursor: url("/cursors/pata-ccw.png") 8 8;
+  cursor: var(--wolf-cursor), auto;
+}
+
+/* Force the cursor everywhere so existing `cursor: pointer` rules don't override it. */
+body.wolf-cursor * {
+  cursor: var(--wolf-cursor), auto !important;
+}
+
+/* Keep reasonable fallbacks for common interaction states. */
+body.wolf-cursor a[href],
+body.wolf-cursor button,
+body.wolf-cursor [role="button"],
+body.wolf-cursor [onclick] {
+  cursor: var(--wolf-cursor), pointer !important;
+}
+
+body.wolf-cursor input[type="text"],
+body.wolf-cursor input[type="password"],
+body.wolf-cursor input[type="email"],
+body.wolf-cursor input[type="number"],
+body.wolf-cursor textarea {
+  cursor: text !important;
+}
+
+body.wolf-cursor :disabled,
+body.wolf-cursor [aria-disabled="true"] {
+  cursor: not-allowed !important;
+}
