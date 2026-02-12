@@ -63,7 +63,7 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.updateByAdmin(id, dto));
     }
 
-    @PatchMapping("/me/notes")
+   /* @PatchMapping("/me/notes")
     public ResponseEntity<PlayerMeDto> updateMyNotes(
             Authentication authentication,
             @RequestBody String notes
@@ -71,6 +71,15 @@ public class PlayerController {
         return ResponseEntity.ok(
                 playerService.updateMyNotes(authentication, notes)
         );
-    }
+    }*/
 
+    @PatchMapping("/me/notes")
+    public ResponseEntity<PlayerMeDto> updateMyNotes(
+            Authentication authentication,
+            @RequestBody PlayerNotesDto dto
+    ) {
+        return ResponseEntity.ok(
+                playerService.updateMyNotes(authentication, dto.notes())
+        );
+    }
 }
