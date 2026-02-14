@@ -1,6 +1,7 @@
 /* contenedor base de TODAS las pantallas */
 .screen {
   min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   box-sizing: border-box;
 
@@ -11,6 +12,12 @@
 
   text-align: center;
   padding: 24px;
+}
+
+.screen--footer-reserve {
+  --footer-reserve: 64px;
+  padding-bottom: calc(24px + var(--footer-reserve));
+  padding-bottom: calc(24px + var(--footer-reserve) + env(safe-area-inset-bottom));
 }
 
 /* layout de Login */
@@ -164,6 +171,12 @@
   text-transform: uppercase;
   font-size: 12px;
   cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .plano-back-btn {
+    bottom: 12px;
+  }
 }
 
 .plano-back-btn:hover {
@@ -559,7 +572,7 @@
 .menu-note-wrap {
   position: absolute;
   top: -36px;
-  right: -14px;
+  right: 2px;
   z-index: 2;
   width: clamp(84px, 14vw, 140px);
   height: auto;
@@ -570,6 +583,47 @@
   border: none;
   background: transparent;
   cursor: pointer;
+}
+
+.menu-layout.menu-layout--floating .menu-silence-btn {
+  grid-column: 1 / -1;
+  justify-self: center;
+  align-self: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  cursor: pointer;
+  line-height: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+}
+
+.menu-layout.menu-layout--floating .menu-silence-btn:hover {
+  transform: translateY(-2px);
+}
+
+.menu-layout.menu-layout--floating .menu-silence-btn:active {
+  transform: translateY(1px);
+}
+
+.menu-layout.menu-layout--floating .menu-silence-btn:focus-visible {
+  outline: 3px solid rgba(255, 216, 120, 0.55);
+  outline-offset: 6px;
+}
+
+.menu-silence-btn-img {
+  width: clamp(56px, 9.2vw, 92px);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.55));
+}
+
+.menu-layout.menu-layout--floating .menu-silence-btn[aria-pressed="true"] .menu-silence-btn-img {
+  opacity: 0.86;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.55)) saturate(0.4) brightness(0.92);
 }
 
 .menu-note-img {
@@ -690,6 +744,42 @@
   cursor: not-allowed;
 }
 
+.menu-notes-actions {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 12%;
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+  transform: translate(16px, 40px) rotate(var(--notes-rotate-inv));
+  transform-origin: center;
+}
+
+.menu-notes-save {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 28, 18, 0.22);
+  background: rgba(245, 246, 242, 0.62);
+  color: rgba(34, 28, 18, 0.88);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.menu-notes-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.menu-notes-save:focus-visible {
+  outline: 3px solid rgba(255, 216, 120, 0.55);
+  outline-offset: 4px;
+}
+
 .menu-notes-saving,
 .menu-notes-error {
   position: absolute;
@@ -722,6 +812,50 @@
   box-shadow:
     0 14px 40px rgba(0, 0, 0, 0.6),
     inset 0 0 18px rgba(0, 0, 0, 0.35);
+}
+
+.menu-video-hint,
+.video-sound-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  z-index: 3;
+  margin: 0;
+  padding: 6px 10px;
+  max-width: min(60ch, 90%);
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: rgba(245, 246, 242, 0.9);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  text-align: center;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 420px) {
+  .menu-video-hint,
+  .video-sound-hint {
+    font-size: 10px;
+    bottom: 3px;
+  }
+}
+
+.admin-video-frame {
+  position: relative;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .menu-greeting-video:focus-visible {
@@ -2654,6 +2788,7 @@
   left: 0;
   right: 0;
   bottom: 10px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
   padding: 0 16px;
 
   font-family: var(--font-body);

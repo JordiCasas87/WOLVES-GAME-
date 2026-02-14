@@ -263,7 +263,7 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   const uiEnterClass = showUi && !hasRevealedUiRef.current ? " login-ui-enter" : "";
 
   return (
-    <div className="screen login-screen">
+    <div className="screen login-screen screen--footer-reserve">
       <div className="login-bg" aria-hidden="true">
         <video
           className="login-bg-video"

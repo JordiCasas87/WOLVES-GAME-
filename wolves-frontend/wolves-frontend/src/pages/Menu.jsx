@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { apiRequest, clearToken } from "../services/api";
 
 const flameGifUrl = new URL("../assets/animaciones/llama.gif", import.meta.url).href;
@@ -8,6 +8,7 @@ const wolfGreetingVideoUrl = new URL(
 ).href;
 const noteImgUrl = new URL("../assets/images/nota.png", import.meta.url).href;
 const noteIconImgUrl = new URL("../assets/images/notaIcono.png", import.meta.url).href;
+const silenceIconImgUrl = new URL("../assets/images/botonSilencio.png", import.meta.url).href;
 
 function sanitizeNotes(value) {
   return String(value ?? "")
@@ -29,11 +30,21 @@ function stripNotesHeader(value) {
   return lines.slice(1).join("\n").trimStart();
 }
 
-function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDuckBgMusic }) {
+function Menu({
+  onNewGame,
+  onMistakesGame,
+  onStats,
+  onAdmin,
+  onBackToLogin,
+  onDuckBgMusic,
+  isSilentMode = false,
+  onToggleSilentMode,
+}) {
   const [showDifficulty, setShowDifficulty] = useState(false);
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [meChecked, setMeChecked] = useState(false);
+  const [isVideoHintDismissed, setIsVideoHintDismissed] = useState(false);
   const [notes, setNotes] = useState("");
   const [notesDraft, setNotesDraft] = useState("");
   const [notesError, setNotesError] = useState("");
@@ -43,21 +54,23 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
   const isSavingNotesRef = useRef(false);
   const notesBaselineRef = useRef("");
 
-		  const replayGreetingVideo = (video) => {
-		    video.muted = false;
-		    video.volume = 1;
-		    video.currentTime = 0;
-        if (typeof onDuckBgMusic === "function") onDuckBgMusic(0.8);
-		    const playAttempt = video.play();
-		    if (playAttempt && typeof playAttempt.catch === "function") playAttempt.catch(() => {});
-		  };
+  const showAdminButton = meChecked && isAdmin && onAdmin;
+
+  const replayGreetingVideo = (video) => {
+    video.muted = isSilentMode;
+    video.volume = isSilentMode ? 0 : 1;
+    video.currentTime = 0;
+    if (!isSilentMode && typeof onDuckBgMusic === "function") onDuckBgMusic(0.8);
+    const playAttempt = video.play();
+    if (playAttempt && typeof playAttempt.catch === "function") playAttempt.catch(() => {});
+  };
 
   const notesHeader = "NOTAS:";
   const defaultNotes = `-El lobo olía a rancio...\n-Repasar teoria Testing y lamdas.\n-Tus notas aqui ->`;
 
-  const saveNotes = async (nextNotes) => {
+  const saveNotes = useCallback(async (nextNotes) => {
     const sanitizedNotes = stripNotesHeader(sanitizeNotes(nextNotes));
-    if (isSavingNotesRef.current) return;
+    if (isSavingNotesRef.current) return false;
     isSavingNotesRef.current = true;
     setIsSavingNotes(true);
     setNotesError("");
@@ -68,13 +81,15 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
       setNotes(sanitizedNotes);
       setNotesDraft(sanitizedNotes);
       notesBaselineRef.current = sanitizedNotes;
+      return true;
     } catch (err) {
       setNotesError(err instanceof Error ? err.message : "Error al guardar las notas.");
+      return false;
     } finally {
       isSavingNotesRef.current = false;
       setIsSavingNotes(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!showDifficulty) return undefined;
@@ -113,30 +128,6 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
     };
   }, []);
 
-  useEffect(() => {
-    if (!isNotesOpen) return undefined;
-
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") setIsNotesOpen(false);
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isNotesOpen]);
-
-  useEffect(() => {
-    if (!isNotesOpen) return undefined;
-    if (!meChecked) return undefined;
-    if (!notesLoadedRef.current) return undefined;
-    if (notesDraft === notesBaselineRef.current) return undefined;
-
-    const id = window.setTimeout(() => {
-      void saveNotes(notesDraft);
-    }, 700);
-
-    return () => window.clearTimeout(id);
-  }, [isNotesOpen, notesDraft, meChecked]);
-
   const startNewGame = (difficulty) => {
     setShowDifficulty(false);
     onNewGame(difficulty);
@@ -151,13 +142,57 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
     setIsNotesOpen(true);
   };
 
-  const closeNotes = () => {
+  const closeNotes = useCallback(() => {
     setIsNotesOpen(false);
     setNotesError("");
-  };
+  }, []);
+
+  const handleSaveNotes = useCallback(async () => {
+    if (!notesLoadedRef.current) return;
+    if (notesDraft === notesBaselineRef.current) return;
+    await saveNotes(notesDraft);
+  }, [notesDraft, saveNotes]);
+
+  const handleCloseNotes = useCallback(async () => {
+    if (!notesLoadedRef.current) {
+      closeNotes();
+      return;
+    }
+
+    if (notesDraft === notesBaselineRef.current) {
+      closeNotes();
+      return;
+    }
+
+    const ok = await saveNotes(notesDraft);
+    if (ok) closeNotes();
+  }, [closeNotes, notesDraft, saveNotes]);
+
+  useEffect(() => {
+    if (!isNotesOpen) return undefined;
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") void handleCloseNotes();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleCloseNotes, isNotesOpen]);
+
+  const silentToggleButton = (
+    <button
+      className="menu-silence-btn"
+      type="button"
+      onClick={() => onToggleSilentMode?.()}
+      aria-label={isSilentMode ? "Desactivar modo silencio" : "Activar modo silencio"}
+      aria-pressed={isSilentMode}
+    >
+      <img className="menu-silence-btn-img" src={silenceIconImgUrl} alt="" aria-hidden="true" />
+    </button>
+  );
 
   return (
-    <div className="screen menu-screen menu-screen--softblur">
+    <div className="screen menu-screen menu-screen--softblur screen--footer-reserve">
       <div className="menu-stack">
         <div className="menu-video-wrap">
           <div className="menu-video-frame">
@@ -171,18 +206,22 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
               role="button"
               tabIndex={0}
               aria-label="Reproducir saludo del lobo"
-              onClick={(e) => replayGreetingVideo(e.currentTarget)}
+              onClick={(e) => {
+                setIsVideoHintDismissed(true);
+                replayGreetingVideo(e.currentTarget);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
+                  setIsVideoHintDismissed(true);
                   replayGreetingVideo(e.currentTarget);
                 }
               }}
               onPlay={() => {
-                if (typeof onDuckBgMusic === "function") onDuckBgMusic(0.8);
+                if (!isSilentMode && typeof onDuckBgMusic === "function") onDuckBgMusic(0.8);
               }}
               onPause={() => {
-                if (typeof onDuckBgMusic === "function") onDuckBgMusic(1);
+                if (!isSilentMode && typeof onDuckBgMusic === "function") onDuckBgMusic(1);
               }}
               onEnded={(e) => {
                 const video = e.currentTarget;
@@ -190,9 +229,16 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
                 if (!Number.isFinite(duration) || duration <= 0) return;
                 video.pause();
                 video.currentTime = Math.max(0, duration - 0.05);
-                if (typeof onDuckBgMusic === "function") onDuckBgMusic(1);
+                if (!isSilentMode && typeof onDuckBgMusic === "function") onDuckBgMusic(1);
               }}
             />
+
+            {!isSilentMode && !isVideoHintDismissed && (
+              <p className="video-sound-hint" aria-hidden="true">
+                Clica el vídeo para oír el sonido
+              </p>
+            )}
+
             {!isNotesOpen && (
               <button
                 className="menu-note-wrap"
@@ -211,35 +257,41 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
                   <p className="menu-notes-header" aria-hidden="true">
                     {notesHeader}
                   </p>
-                  <button
-                    className="menu-notes-close"
-                    type="button"
-                    onClick={() => {
-                      if (notesDraft !== notesBaselineRef.current) void saveNotes(notesDraft);
-                      closeNotes();
-                    }}
-                    aria-label="Cerrar notas"
-                    disabled={isSavingNotes}
-                  >
-                    ×
-                  </button>
-                  <textarea
-                    className="menu-notes-textarea"
-                    value={notesDraft}
-                    onChange={(e) => setNotesDraft(e.target.value)}
-                    onBlur={() => {
-                      if (!notesLoadedRef.current) return;
-                      if (notesDraft === notesBaselineRef.current) return;
-                      void saveNotes(notesDraft);
-                    }}
-                    aria-label="Editar notas"
-                    spellCheck
-                  />
-                  {notesError && <p className="menu-notes-error">{notesError}</p>}
-                  {!notesError && isSavingNotes && <p className="menu-notes-saving">Guardando...</p>}
-                </div>
-              </div>
-            )}
+	                  <button
+	                    className="menu-notes-close"
+	                    type="button"
+	                    onClick={() => void handleCloseNotes()}
+	                    aria-label="Cerrar notas"
+	                    disabled={isSavingNotes}
+	                  >
+	                    ×
+	                  </button>
+	                  <textarea
+	                    className="menu-notes-textarea"
+	                    value={notesDraft}
+	                    onChange={(e) => setNotesDraft(e.target.value)}
+	                    aria-label="Editar notas"
+	                    spellCheck
+	                  />
+                    <div className="menu-notes-actions">
+                      <button
+                        className="menu-notes-save"
+                        type="button"
+                        onClick={() => void handleSaveNotes()}
+                        disabled={
+                          isSavingNotes ||
+                          !notesLoadedRef.current ||
+                          notesDraft === notesBaselineRef.current
+                        }
+                      >
+                        Guardar
+                      </button>
+                    </div>
+	                  {notesError && <p className="menu-notes-error">{notesError}</p>}
+	                  {!notesError && isSavingNotes && <p className="menu-notes-saving">Guardando...</p>}
+	                </div>
+	              </div>
+	            )}
           </div>
         </div>
 
@@ -267,11 +319,15 @@ function Menu({ onNewGame, onMistakesGame, onStats, onAdmin, onBackToLogin, onDu
             Volver al login
           </button>
 
-          {meChecked && isAdmin && onAdmin && (
+          {!showAdminButton && silentToggleButton}
+
+          {showAdminButton && (
             <button className="dungeon-btn menu-admin-btn" onClick={onAdmin} type="button">
               Administración
             </button>
           )}
+
+          {showAdminButton && silentToggleButton}
         </div>
       </div>
 

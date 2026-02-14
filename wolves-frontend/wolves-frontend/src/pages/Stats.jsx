@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { apiRequest, clearToken } from "../services/api";
+import { apiRequest } from "../services/api";
 
-function Stats({ onBack, onBackToLogin }) {
+function Stats({ onBack }) {
   const [me, setMe] = useState(null);
   const [ranking, setRanking] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -105,17 +105,6 @@ function Stats({ onBack, onBackToLogin }) {
         <div className="stats-actions">
           <button className="dungeon-btn" onClick={onBack} type="button">
             Volver al menu
-          </button>
-
-          <button
-            className="dungeon-btn"
-            onClick={() => {
-              clearToken();
-              onBackToLogin();
-            }}
-            type="button"
-          >
-            Volver al login
           </button>
         </div>
       </div>
