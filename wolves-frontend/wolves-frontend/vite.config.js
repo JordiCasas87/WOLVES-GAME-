@@ -1,24 +1,9 @@
+/*
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  preview: {
-    host: true,
-    port: 3000,
-    allowedHosts: [
-      'wolves-game-front.onrender.com'
-    ]
-  }
-})
-//hola
-  /*
-   ─────────────────────────────────────────────
-   🔴 CONFIGURACIÓN LOCAL (BACKEND EN LOCAL)
-   👉 Úsala SOLO si arrancas IntelliJ en :8080
-   👉 Para activrrla: descomenta este bloque
-   ─────────────────────────────────────────────
-
   server: {
     proxy: {
       '/api': 'http://localhost:8080',
@@ -28,14 +13,15 @@ export default defineConfig({
       '/me': 'http://localhost:8080',
     },
   },
+})
+*/
 
-  */
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-  /*
-   ─────────────────────────────────────────────
-   🟢 CONFIGURACIÓN ACTIVA (RENDER)
-   👉 No hace falta server ni proxy
-   👉 Las llamadas van a VITE_API_URL
-   👉 Definido en .env
-   ─────────────────────────────────────────────
-  */
+export default defineConfig({
+  plugins: [react()],
+})
+  
+
+  

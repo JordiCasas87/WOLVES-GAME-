@@ -7,7 +7,7 @@ const travelingVideoUrl = new URL(
 
 function GameInfo({ onBack }) {
   const videoRef = useRef(null);
-  const [showUi, setShowUi] = useState(true);
+  const [showUi] = useState(true);
 
   useEffect(() => {
     const onKeyDown = (e) => {

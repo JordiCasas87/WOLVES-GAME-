@@ -17,6 +17,7 @@ const naviSfxUrl = new URL("./assets/sounds/navi.mp3", import.meta.url).href;
 const roarSfxUrl = new URL("./assets/sounds/Roar.mp3", import.meta.url).href;
 const howlSfxUrl = new URL("./assets/sounds/aullido.mp3", import.meta.url).href;
 const howlSfxRelativeVolume = 0.35;
+const SILENT_MODE_KEY = "wolves_silent_mode";
 
 function App() {
   const [screen, setScreen] = useState("login");
@@ -24,33 +25,127 @@ function App() {
   const [gameMode, setGameMode] = useState("new"); // new | mistakes
   const [gameResult, setGameResult] = useState(null);
   const [bgMusicDuckMultiplier, setBgMusicDuckMultiplier] = useState(1);
+  const [isSilentMode, setIsSilentMode] = useState(() => {
+    try {
+      const raw = localStorage.getItem(SILENT_MODE_KEY);
+      return raw === "1" || raw === "true";
+    } catch {
+      return false;
+    }
+  });
   const bgMusicRef = useRef(null);
   const elevatorMusicRef = useRef(null);
   const naviSfxRef = useRef(null);
   const roarSfxRef = useRef(null);
   const howlSfxRef = useRef(null);
   const naviSfxTimeoutRef = useRef(null);
+  const bgWasPlayingBeforeHideRef = useRef(false);
+  const elevatorWasPlayingBeforeHideRef = useRef(false);
+
+  const setScreenSafely = (nextScreen) => {
+    if (screen === "menu" && nextScreen !== "menu") setBgMusicDuckMultiplier(1);
+    setScreen(nextScreen);
+  };
+
+  const toggleSilentMode = () => {
+    setIsSilentMode((prev) => !prev);
+  };
 
 	  const bgMusicMode =
-	    screen === "menu" || screen === "stats" || screen === "admin"
+	    isSilentMode
+	      ? "off"
+	      : screen === "menu" || screen === "stats" || screen === "admin"
 	      ? "low"
 	      : screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano"
 	        ? "full"
 	        : "off";
 	  const bgMusicVolume =
 	    bgMusicMode === "low" ? 0.18 : bgMusicMode === "full" ? 0.75 : 0;
-  const isElevatorActive = screen === "game";
-
-  useEffect(() => {
-    // Ensure we never keep background music ducked when leaving the menu screen.
-    if (screen !== "menu") setBgMusicDuckMultiplier(1);
-  }, [screen]);
+  const isElevatorActive = !isSilentMode && screen === "game";
 
   useEffect(() => {
     return () => {
       if (naviSfxTimeoutRef.current) window.clearTimeout(naviSfxTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SILENT_MODE_KEY, isSilentMode ? "1" : "0");
+    } catch {
+      // Ignore storage failures (private mode / blocked storage).
+    }
+  }, [isSilentMode]);
+
+  useEffect(() => {
+    if (!isSilentMode) return;
+    bgMusicRef.current?.pause();
+    elevatorMusicRef.current?.pause();
+    naviSfxRef.current?.pause();
+    roarSfxRef.current?.pause();
+    howlSfxRef.current?.pause();
+  }, [isSilentMode]);
+
+  useEffect(() => {
+    const pauseAudioForBackground = () => {
+      const bgAudio = bgMusicRef.current;
+      const elevatorAudio = elevatorMusicRef.current;
+
+      if (bgAudio) {
+        bgWasPlayingBeforeHideRef.current = !bgAudio.paused && !bgAudio.ended;
+        bgAudio.pause();
+      }
+
+      if (elevatorAudio) {
+        elevatorWasPlayingBeforeHideRef.current = !elevatorAudio.paused && !elevatorAudio.ended;
+        elevatorAudio.pause();
+      }
+
+      naviSfxRef.current?.pause();
+      roarSfxRef.current?.pause();
+      howlSfxRef.current?.pause();
+    };
+
+    const resumeAudioOnForeground = () => {
+      if (document.hidden) return;
+
+      const tryPlay = (audio) => {
+        const attempt = audio.play();
+        if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+      };
+
+      const bgAudio = bgMusicRef.current;
+      if (bgAudio && bgMusicMode !== "off" && bgWasPlayingBeforeHideRef.current) {
+        bgAudio.volume = Math.max(0, Math.min(1, bgMusicVolume * bgMusicDuckMultiplier));
+        tryPlay(bgAudio);
+      }
+
+      const elevatorAudio = elevatorMusicRef.current;
+      if (elevatorAudio && isElevatorActive && elevatorWasPlayingBeforeHideRef.current) {
+        elevatorAudio.volume = 0.14;
+        tryPlay(elevatorAudio);
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) pauseAudioForBackground();
+      else resumeAudioOnForeground();
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("pagehide", pauseAudioForBackground);
+    window.addEventListener("pageshow", resumeAudioOnForeground);
+    window.addEventListener("blur", pauseAudioForBackground);
+    window.addEventListener("focus", resumeAudioOnForeground);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", pauseAudioForBackground);
+      window.removeEventListener("pageshow", resumeAudioOnForeground);
+      window.removeEventListener("blur", pauseAudioForBackground);
+      window.removeEventListener("focus", resumeAudioOnForeground);
+    };
+  }, [bgMusicDuckMultiplier, bgMusicMode, bgMusicVolume, isElevatorActive]);
 
   useEffect(() => {
     const audio = bgMusicRef.current;
@@ -119,6 +214,7 @@ function App() {
 	    screen === "login" || screen === "credits" || screen === "gameInfo" || screen === "plano";
 
   const playNaviSfx = () => {
+    if (isSilentMode) return;
     const audio = naviSfxRef.current;
     if (!audio) return;
     audio.volume = isLoginScreens ? bgMusicVolume : 0.45;
@@ -128,6 +224,7 @@ function App() {
   };
 
   const playRoarSfx = () => {
+    if (isSilentMode) return;
     const audio = roarSfxRef.current;
     if (!audio) return;
     audio.volume = isLoginScreens ? bgMusicVolume : 0.7;
@@ -138,6 +235,7 @@ function App() {
 
   useEffect(() => {
     if (screen !== "login") return undefined;
+    if (isSilentMode) return undefined;
 
     let disposed = false;
     let didPlay = false;
@@ -191,24 +289,21 @@ function App() {
       window.clearTimeout(id);
       if (cleanupInteract) cleanupInteract();
     };
-  }, [screen]);
-
-  const footerText =
-    "Developed as part of an academic project. Original concept, design & layout: Jordi Casas.";
+  }, [isSilentMode, screen]);
 
   let content = null;
 
 	  if (screen === "login") {
 	    content = (
 	      <Login
-	        onLoginSuccess={() => setScreen("plano")}
-	        onGameInfo={() => setScreen("gameInfo")}
+	        onLoginSuccess={() => setScreenSafely("plano")}
+	        onGameInfo={() => setScreenSafely("gameInfo")}
 	        onCredits={() => {
 	          if (naviSfxTimeoutRef.current) window.clearTimeout(naviSfxTimeoutRef.current);
 	          naviSfxTimeoutRef.current = window.setTimeout(() => {
 	            playNaviSfx();
           }, 1000);
-          setScreen("credits");
+          setScreenSafely("credits");
         }}
       />
     );
@@ -216,24 +311,26 @@ function App() {
 
 	  if (screen === "menu") {
 	    content = (
-	      <Menu
+      <Menu
 	        onDuckBgMusic={(multiplier) => {
 	          const next = Number(multiplier);
 	          if (!Number.isFinite(next)) return;
 	          setBgMusicDuckMultiplier(Math.max(0, Math.min(1, next)));
 	        }}
+          isSilentMode={isSilentMode}
+          onToggleSilentMode={toggleSilentMode}
 	        onNewGame={(difficulty) => {
 	          setGameMode("new");
 	          setGameDifficulty(difficulty);
-	          setScreen("game");
+	          setScreenSafely("game");
 	        }}
         onMistakesGame={() => {
           setGameMode("mistakes");
-          setScreen("game");
+          setScreenSafely("game");
         }}
-        onStats={() => setScreen("stats")}
-        onAdmin={() => setScreen("admin")}
-        onBackToLogin={() => setScreen("login")}
+        onStats={() => setScreenSafely("stats")}
+        onAdmin={() => setScreenSafely("admin")}
+        onBackToLogin={() => setScreenSafely("plano")}
       />
     );
   }
@@ -245,9 +342,9 @@ function App() {
         difficulty={gameDifficulty}
         onFinish={(result) => {
           setGameResult(result ?? null);
-          setScreen("result");
+          setScreenSafely("result");
         }}
-        onBack={() => setScreen("menu")}
+        onBack={() => setScreenSafely("menu")}
       />
     );
   }
@@ -257,9 +354,10 @@ function App() {
       <Result
         mode={gameMode}
         result={gameResult}
+        isSilentMode={isSilentMode}
         onRestart={() => {
           setGameResult(null);
-          setScreen("menu");
+          setScreenSafely("menu");
         }}
       />
     );
@@ -267,12 +365,12 @@ function App() {
 
   if (screen === "stats") {
     content = (
-      <Stats onBack={() => setScreen("menu")} onBackToLogin={() => setScreen("login")} />
+      <Stats onBack={() => setScreenSafely("menu")} />
     );
   }
 
   if (screen === "admin") {
-    content = <Admin onBack={() => setScreen("menu")} />;
+    content = <Admin onBack={() => setScreenSafely("menu")} isSilentMode={isSilentMode} />;
   }
 
 	  if (screen === "credits") {
@@ -280,7 +378,7 @@ function App() {
 	      <Credits
 	        onBack={() => {
 	          playRoarSfx();
-	          setScreen("login");
+	          setScreenSafely("login");
 	        }}
 	      />
 	    );
@@ -289,17 +387,17 @@ function App() {
 	  if (screen === "plano") {
 	    content = (
 	      <PlanoSplash
-	        onDone={() => setScreen("menu")}
+	        onDone={() => setScreenSafely("menu")}
 	        onBack={() => {
 	          clearToken();
-	          setScreen("login");
+	          setScreenSafely("login");
 	        }}
 	      />
 	    );
 	  }
 
 	  if (screen === "gameInfo") {
-	    content = <GameInfo onBack={() => setScreen("login")} />;
+	    content = <GameInfo onBack={() => setScreenSafely("login")} />;
 	  }
 
   if (!content) return null;
@@ -318,7 +416,6 @@ function App() {
       <audio ref={roarSfxRef} src={roarSfxUrl} preload="auto" aria-hidden="true" />
       <audio ref={howlSfxRef} src={howlSfxUrl} preload="auto" aria-hidden="true" />
       {content}
-      <footer className="page-footer">{footerText}</footer>
     </>
   );
 }

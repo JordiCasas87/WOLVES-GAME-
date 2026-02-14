@@ -15,7 +15,7 @@ function normalizeSearchText(value) {
     .toLowerCase();
 }
 
-function Admin({ onBack }) {
+function Admin({ onBack, isSilentMode = false }) {
   const [me, setMe] = useState(null);
   const [players, setPlayers] = useState([]);
   const [questions, setQuestions] = useState([]);
@@ -28,6 +28,7 @@ function Admin({ onBack }) {
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
   const [isAdminSoundEnabled, setIsAdminSoundEnabled] = useState(false);
+  const [isAdminVideoHintDismissed, setIsAdminVideoHintDismissed] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [playerModalId, setPlayerModalId] = useState("");
   const [playerModalData, setPlayerModalData] = useState(null);
@@ -35,6 +36,11 @@ function Admin({ onBack }) {
   const [isPlayerModalOpen, setIsPlayerModalOpen] = useState(false);
   const [isLoadingPlayerModal, setIsLoadingPlayerModal] = useState(false);
   const [isSavingPlayerModal, setIsSavingPlayerModal] = useState(false);
+
+  useEffect(() => {
+    if (!isSilentMode) return;
+    setIsAdminSoundEnabled(false);
+  }, [isSilentMode]);
 
   useEffect(() => {
     let isActive = true;
@@ -293,6 +299,7 @@ function Admin({ onBack }) {
   };
 
   const toggleAdminVideoSound = (video) => {
+    if (isSilentMode) return;
     setIsAdminSoundEnabled((prev) => {
       const next = !prev;
       video.muted = !next;
@@ -324,33 +331,47 @@ function Admin({ onBack }) {
   return (
     <div className="screen menu-screen menu-screen--softblur">
       <div className="menu-layout stats-layout admin-layout">
-        <video
-          className="admin-wolf-img"
-          src={adminWolfVideoUrl}
-          autoPlay
-          loop
-          muted={!isAdminSoundEnabled}
-          playsInline
-          preload="metadata"
-          poster={adminWolfPosterUrl}
-          role="button"
-          tabIndex={0}
-          aria-label={
-            isAdminSoundEnabled
-              ? "Silenciar vídeo de administración"
-              : "Activar sonido del vídeo de administración"
-          }
-          onLoadedMetadata={(e) => {
-            e.currentTarget.volume = 0.65;
-          }}
-          onClick={(e) => toggleAdminVideoSound(e.currentTarget)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              toggleAdminVideoSound(e.currentTarget);
+        <div className="admin-video-frame">
+          <video
+            className="admin-wolf-img"
+            src={adminWolfVideoUrl}
+            autoPlay
+            loop
+            muted={isSilentMode || !isAdminSoundEnabled}
+            playsInline
+            preload="metadata"
+            poster={adminWolfPosterUrl}
+            role="button"
+            tabIndex={0}
+            aria-label={
+              isSilentMode
+                ? "Modo silencio activado"
+                : isAdminSoundEnabled
+                ? "Silenciar vídeo de administración"
+                : "Activar sonido del vídeo de administración"
             }
-          }}
-        />
+            onLoadedMetadata={(e) => {
+              e.currentTarget.volume = 0.65;
+            }}
+            onClick={(e) => {
+              setIsAdminVideoHintDismissed(true);
+              toggleAdminVideoSound(e.currentTarget);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setIsAdminVideoHintDismissed(true);
+                toggleAdminVideoSound(e.currentTarget);
+              }
+            }}
+          />
+
+          {!isSilentMode && !isAdminSoundEnabled && !isAdminVideoHintDismissed && (
+            <p className="video-sound-hint" aria-hidden="true">
+              Clica el vídeo para oír el sonido
+            </p>
+          )}
+        </div>
         <h2 className="stats-title">Administración</h2>
 
         {isLoadingMe && <p className="helper-text">Cargando...</p>}
