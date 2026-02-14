@@ -11,6 +11,13 @@ const fondoEntradaVideoUrl = new URL(
   import.meta.url,
 ).href;
 
+const moneySfxUrl = new URL("../assets/sounds/money.mp3", import.meta.url).href;
+
+const flyingYenGifUrl = new URL(
+  "../assets/animaciones/flying-yen.gif",
+  import.meta.url,
+).href;
+
 const cabraAnimationUrl = new URL(
   "../assets/animaciones/cabraAnimation.mov",
   import.meta.url,
@@ -97,6 +104,10 @@ function wrapOffset(index, activeIndex, length) {
 
 function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   const [showUi, setShowUi] = useState(false);
+  const [geldMoneySprites, setGeldMoneySprites] = useState([]);
+  const geldMoneyNextIdRef = useRef(1);
+  const moneySfxRef = useRef(null);
+  const [moneyScore, setMoneyScore] = useState(0);
   const [mode, setMode] = useState("choose"); // choose | login | character | signup
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -111,6 +122,7 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   const resumeTimeoutRef = useRef(null);
   const hasRevealedUiRef = useRef(false);
   const characterCount = characters.length;
+  const isYenMiniGameEnabled = mode === "choose" || mode === "login";
 
   const clearResumeTimeout = () => {
     if (resumeTimeoutRef.current) {
@@ -245,6 +257,153 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
   useEffect(() => () => clearResumeTimeout(), []);
 
   useEffect(() => {
+    if (!isYenMiniGameEnabled) {
+      setGeldMoneySprites([]);
+      setMoneyScore(0);
+      return undefined;
+    }
+
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    if (mq?.matches) return undefined;
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const randInt = (min, max) => Math.floor(rand(min, max + 1));
+    const angleDeg = (dxPx, dyPx) => (Math.atan2(dyPx, dxPx) * 180) / Math.PI;
+
+    const spawn = () => {
+      const offLeft = -25;
+      const offRight = 125;
+      const offTop = -25;
+      const offBottom = 125;
+
+      const y1 = randInt(8, 92);
+      const y2 = randInt(8, 92);
+      const x1 = randInt(5, 95);
+      const x2 = randInt(5, 95);
+      const pattern = randInt(0, 7);
+
+      let fromXvw;
+      let fromYvh;
+      let toXvw;
+      let toYvh;
+
+      switch (pattern) {
+        case 0:
+          fromXvw = offLeft;
+          toXvw = offRight;
+          fromYvh = y1;
+          toYvh = y1;
+          break;
+        case 1:
+          fromXvw = offRight;
+          toXvw = offLeft;
+          fromYvh = y1;
+          toYvh = y1;
+          break;
+        case 2:
+          fromXvw = x1;
+          toXvw = x1;
+          fromYvh = offTop;
+          toYvh = offBottom;
+          break;
+        case 3:
+          fromXvw = x1;
+          toXvw = x1;
+          fromYvh = offBottom;
+          toYvh = offTop;
+          break;
+        case 4:
+          fromXvw = offLeft;
+          toXvw = offRight;
+          fromYvh = y1;
+          toYvh = y2;
+          break;
+        case 5:
+          fromXvw = offRight;
+          toXvw = offLeft;
+          fromYvh = y1;
+          toYvh = y2;
+          break;
+        case 6:
+          fromXvw = x1;
+          toXvw = x2;
+          fromYvh = offTop;
+          toYvh = offBottom;
+          break;
+        case 7:
+        default:
+          fromXvw = x1;
+          toXvw = x2;
+          fromYvh = offBottom;
+          toYvh = offTop;
+          break;
+      }
+
+      const dxPx = ((toXvw - fromXvw) / 100) * window.innerWidth;
+      const dyPx = ((toYvh - fromYvh) / 100) * window.innerHeight;
+      let rotate = angleDeg(dxPx, dyPx);
+      let flipX = 1;
+
+      // Sprite faces "forward" to the right by default.
+      // Keep rotation within [-90, 90] and flip horizontally for left-facing motion.
+      if (rotate > 90 || rotate < -90) {
+        flipX = -1;
+        rotate = rotate > 0 ? rotate - 180 : rotate + 180;
+      }
+
+      const id = geldMoneyNextIdRef.current++;
+      const durationMs = Math.round(rand(6500, 12000));
+      const scale = Number(rand(0.9, 1.08).toFixed(2));
+
+      setGeldMoneySprites((prev) => {
+        if (prev.length >= 4) return prev;
+        return [
+          ...prev,
+          {
+            id,
+            fromX: `${fromXvw}vw`,
+            fromY: `${fromYvh}vh`,
+            toX: `${toXvw}vw`,
+            toY: `${toYvh}vh`,
+            durationMs,
+            scale,
+            rotate: Number(rotate.toFixed(1)),
+            flipX,
+          },
+        ];
+      });
+    };
+
+    // Seed one so it feels alive immediately.
+    spawn();
+
+    const interval = window.setInterval(spawn, 3800);
+    return () => window.clearInterval(interval);
+  }, [isYenMiniGameEnabled]);
+
+  const removeGeldMoneySprite = (id) => {
+    setGeldMoneySprites((prev) => prev.filter((sprite) => sprite.id !== id));
+  };
+
+  const playMoneySfx = () => {
+    const audio = moneySfxRef.current;
+    if (!audio) return;
+    try {
+      audio.currentTime = 0;
+    } catch {
+      // Some browsers may block seeks before metadata is ready.
+    }
+    const attempt = audio.play();
+    if (attempt && typeof attempt.catch === "function") attempt.catch(() => {});
+  };
+
+  const captureGeldMoneySprite = (id) => {
+    playMoneySfx();
+    setMoneyScore((prev) => prev + 10);
+    removeGeldMoneySprite(id);
+  };
+
+  useEffect(() => {
     if (mode !== "character") return undefined;
     if (characterCount <= 1) return undefined;
     if (isCoverflowPaused) return undefined;
@@ -264,7 +423,8 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
 
   return (
     <div className="screen login-screen screen--footer-reserve">
-      <div className="login-bg" aria-hidden="true">
+      <audio ref={moneySfxRef} src={moneySfxUrl} preload="auto" aria-hidden="true" />
+      <div className="login-bg">
         <video
           className="login-bg-video"
           src={fondoEntradaVideoUrl}
@@ -273,10 +433,47 @@ function Login({ onLoginSuccess, onCredits, onGameInfo }) {
           muted
           playsInline
           preload="auto"
+          aria-hidden="true"
         >
           Tu navegador no soporta el video.
         </video>
+
+        {isYenMiniGameEnabled &&
+          geldMoneySprites.map((sprite) => (
+            <button
+              key={sprite.id}
+              className="login-bg-geld-money"
+              type="button"
+              onClick={() => captureGeldMoneySprite(sprite.id)}
+              onAnimationEnd={() => removeGeldMoneySprite(sprite.id)}
+              aria-label="Capturar yen"
+              tabIndex={-1}
+              style={{
+                "--from-x": sprite.fromX,
+                "--from-y": sprite.fromY,
+                "--to-x": sprite.toX,
+                "--to-y": sprite.toY,
+                "--money-duration": `${sprite.durationMs}ms`,
+                "--money-scale": sprite.scale,
+                "--money-rot": `${sprite.rotate}deg`,
+                "--money-flip-x": sprite.flipX,
+              }}
+            >
+              <img src={flyingYenGifUrl} alt="" draggable="false" />
+            </button>
+          ))}
       </div>
+
+      {showUi && isYenMiniGameEnabled && (
+        <button
+          className="login-money-counter-btn"
+          type="button"
+          aria-label="Dinero capturado"
+          tabIndex={-1}
+        >
+          ${moneyScore.toLocaleString("en-US")}
+        </button>
+      )}
 
       {showUi && (
         <>

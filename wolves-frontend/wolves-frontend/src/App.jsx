@@ -291,9 +291,6 @@ function App() {
     };
   }, [isSilentMode, screen]);
 
-  const footerText =
-    "Developed as part of an academic project. Original concept, design & layout: Jordi Casas.";
-
   let content = null;
 
 	  if (screen === "login") {
@@ -314,7 +311,7 @@ function App() {
 
 	  if (screen === "menu") {
 	    content = (
-	      <Menu
+      <Menu
 	        onDuckBgMusic={(multiplier) => {
 	          const next = Number(multiplier);
 	          if (!Number.isFinite(next)) return;
@@ -333,7 +330,7 @@ function App() {
         }}
         onStats={() => setScreenSafely("stats")}
         onAdmin={() => setScreenSafely("admin")}
-        onBackToLogin={() => setScreenSafely("login")}
+        onBackToLogin={() => setScreenSafely("plano")}
       />
     );
   }
@@ -419,9 +416,6 @@ function App() {
       <audio ref={roarSfxRef} src={roarSfxUrl} preload="auto" aria-hidden="true" />
       <audio ref={howlSfxRef} src={howlSfxUrl} preload="auto" aria-hidden="true" />
       {content}
-      {screen !== "stats" && screen !== "result" && screen !== "admin" && (
-        <footer className="page-footer">{footerText}</footer>
-      )}
     </>
   );
 }

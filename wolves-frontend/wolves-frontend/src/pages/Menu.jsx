@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiRequest, clearToken } from "../services/api";
+import { apiRequest } from "../services/api";
 
 const flameGifUrl = new URL("../assets/animaciones/llama.gif", import.meta.url).href;
 const wolfGreetingVideoUrl = new URL(
@@ -311,12 +311,11 @@ function Menu({
           <button
             className="dungeon-btn"
             onClick={() => {
-              clearToken();
               onBackToLogin();
             }}
             type="button"
           >
-            Volver al login
+            Volver al hall
           </button>
 
           {!showAdminButton && silentToggleButton}
