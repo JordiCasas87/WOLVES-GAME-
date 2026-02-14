@@ -114,6 +114,6 @@ export async function apiRequest(
     err.data = data;
     throw err;
   }
-
+ console.log("API_URL =", import.meta.env.VITE_API_URL);
   return data;
 }

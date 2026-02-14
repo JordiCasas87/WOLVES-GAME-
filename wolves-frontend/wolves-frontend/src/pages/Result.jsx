@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 const wolfWinVideoUrl = new URL("../assets/animaciones/loboGanas.mp4", import.meta.url).href;
 const wolfLoseVideoUrl = new URL("../assets/animaciones/loboPierdes.mp4", import.meta.url).href;
 
-function Result({ onRestart, result, mode = "new" }) {
+function Result({ onRestart, result, mode = "new", isSilentMode = false }) {
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   const videoSrc = useMemo(() => {
@@ -19,6 +19,7 @@ function Result({ onRestart, result, mode = "new" }) {
   const rewardValue = result?.reward;
 
   const playWithSound = (video) => {
+    if (isSilentMode) return;
     video.muted = false;
     video.volume = 0.8;
     video.currentTime = 0;
@@ -41,7 +42,7 @@ function Result({ onRestart, result, mode = "new" }) {
                 className="result-video"
                 src={videoSrc}
                 autoPlay
-                muted={!isSoundEnabled}
+                muted={isSilentMode || !isSoundEnabled}
                 playsInline
                 preload="auto"
                 role="button"
@@ -61,7 +62,7 @@ function Result({ onRestart, result, mode = "new" }) {
 
               {!isSoundEnabled && (
                 <p className="result-video-hint" aria-hidden="true">
-                  Clic para activar sonido
+                  {isSilentMode ? "Modo silencio activado" : "Clic para activar sonido"}
                 </p>
               )}
             </div>

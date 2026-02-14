@@ -3,6 +3,9 @@ const planoImgUrl = new URL("../assets/images/plano.jpg", import.meta.url).href;
 function PlanoSplash({ onDone, onBack }) {
   return (
     <div className="screen plano-screen" aria-label="Pantalla previa al menú">
+      <p className="plano-message" aria-hidden="true">
+        Elige tu código del alma y preparate para ser entrevistado!
+      </p>
       <div className="plano-card">
         <img className="plano-img" src={planoImgUrl} alt="" aria-hidden="true" />
         <button
@@ -11,10 +14,10 @@ function PlanoSplash({ onDone, onBack }) {
           onClick={() => onDone?.()}
           aria-label="Entrar"
         />
-        <button className="plano-back-btn" type="button" onClick={() => onBack?.()}>
-          Volver al login
-        </button>
       </div>
+      <button className="plano-back-btn" type="button" onClick={() => onBack?.()}>
+        Volver al login
+      </button>
     </div>
   );
 }
