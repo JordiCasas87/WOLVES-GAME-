@@ -9,8 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 public class PlayerController {
+
+    private static final Logger log = LoggerFactory.getLogger(PlayerController.class);
 
     private PlayerService playerService;
 
@@ -20,6 +25,7 @@ public class PlayerController {
 
     @PostMapping("/players")
     public ResponseEntity<PlayerDtoResponse> createPlayer (@Valid @RequestBody PlayerDtoRequest playerDtoRequest) {
+        log.info("Solicitud para crear un nuevo jugador");
         PlayerDtoResponse newPlayerDto = playerService.createPlayer(playerDtoRequest);
 
         return new ResponseEntity<>(newPlayerDto, HttpStatus.CREATED);
@@ -33,14 +39,14 @@ public class PlayerController {
 
    @GetMapping("/players")
     public ResponseEntity <List<PlayerDtoResponse>> getAllPlayers () {
-
+        log.info("Solicitud para obtener la lista de jugadores");
         List<PlayerDtoResponse> allPlayerList = playerService.getAllPlayers();
-
         return new ResponseEntity<>(allPlayerList, HttpStatus.OK);
     }
 
     @DeleteMapping ("/players/{id}")
     public ResponseEntity <Void> deletePlayerById ( @PathVariable String id ){
+        log.warn("Solicitud para eliminar jugador con id {}", id);
         playerService.deletePlayerById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -52,6 +58,7 @@ public class PlayerController {
 
     @GetMapping("/me")
     public PlayerMeDto getMe(Authentication authentication) {
+        log.debug("Solicitud del perfil del usuario autenticado");
         return playerService.getMe(authentication);
     }
 
@@ -60,6 +67,7 @@ public class PlayerController {
             @PathVariable String id,
             @RequestBody PlayerAdminUpdateDto dto
     ) {
+        log.warn("Admin actualizando jugador con id {}", id);
         return ResponseEntity.ok(playerService.updateByAdmin(id, dto));
     }
 
@@ -78,6 +86,7 @@ public class PlayerController {
             Authentication authentication,
             @RequestBody PlayerNotesDto dto
     ) {
+        log.info("Usuario actualizando sus notas");
         return ResponseEntity.ok(
                 playerService.updateMyNotes(authentication, dto.notes())
         );

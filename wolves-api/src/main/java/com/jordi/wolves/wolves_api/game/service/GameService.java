@@ -28,8 +28,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.slf4j.Logger;  // los que son necesarios para aplicar logs!
+import org.slf4j.LoggerFactory;
+
 @Service
 public class GameService {
+
+    private static final Logger log = LoggerFactory.getLogger(GameService.class);
 
     private GameRepository gameRepo;
     private QuestionService questionService;
@@ -55,6 +60,8 @@ public class GameService {
     public GameDtoResponse createGame(Authentication authentication, Difficulty difficulty) {
 
         String username = authentication.getName();
+        // este es de info
+        log.info("Creando nueva partida para el usuario: {}", username);
 
         Player player = playerService.loadPlayerByName(username);
         String playerId = player.getId();
@@ -65,7 +72,9 @@ public class GameService {
                         List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
                 );
 
+        // implementado de warn.
         if (existingGame.isPresent()) {
+            log.warn("El usuario {} ya tiene una partida activa. Reanudando partida.", username);
             return resumeExistingGame(existingGame.get());
         }
 
@@ -73,6 +82,8 @@ public class GameService {
 
         List<Question> questions =
                 questionService.getRandomQuestionEntitiesByDifficulty(difficulty);
+
+        log.info("Generando partida nueva con {} preguntas y recompensa {}.", questions.size(), reward);
 
         Game newGame = new Game(playerId, difficulty, questions, reward);
 
@@ -82,6 +93,9 @@ public class GameService {
     }
 
     public QuestionDtoNextResponse nextQuestion(String gameId) {
+        // al empezar el metodo.
+        log.debug("Solicitando siguiente pregunta para la partida {}", gameId);
+
         Game gameFinded = gameRepo.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found!"));
 
@@ -97,6 +111,8 @@ public class GameService {
         int currentIndex = gameFinded.getCurrentQuestionIndex(); //0
 
         if (gameFinded.isAwaitingAnswer()) {
+            // cuando no se puede continuar una partida, warn.
+            log.warn("La partida {} tiene una pregunta pendiente de responder.", gameId);
             Question pendingQuestion = gameQuestions.get(currentIndex - 1);
             return new QuestionDtoNextResponse(
                     currentIndex,
@@ -126,6 +142,8 @@ public class GameService {
     }
 
     public AnswerResponseDto answerQuestion(String gameId, AnswerRequestDto dtoRequest) {
+        // info de respuesta dad.
+        log.info("Recibiendo respuesta para la partida {}", gameId);
 
         Game gameFinded = gameRepo.findById(gameId)
                 .orElseThrow(() -> new GameNotFoundException("Game Not Found!"));
@@ -143,6 +161,8 @@ public class GameService {
         boolean correct =
                 answeredQuestion.getCorrectAnswerIndex() == dtoRequest.selectedAnswer();
 
+        // informamos en log de como ha ido la respuesta.
+        log.info("Respuesta {} para la partida {}", correct ? "correcta" : "incorrecta", gameId);
 
         updateGameAfterAnswer(gameFinded, answeredQuestion, correct);
         return buildResponse(correct);
@@ -278,6 +298,8 @@ public class GameService {
     }
 
     private void finishGame(Game game) {
+        // info en logs de que ha terminado la partida.
+        log.info("Finalizando partida {} para el jugador {}", game.getId(), game.getPlayerId());
         // llamada a dominio player
         Player player = playerService.loadPlayer(game.getPlayerId());
         boolean passed = game.getScore() >= 6;
@@ -285,5 +307,3 @@ public class GameService {
 
     }
 }
-
-
