@@ -3,6 +3,7 @@ package com.jordi.wolves.wolves_api.game.service;
 import com.jordi.wolves.wolves_api.game.dto.AnswerRequestDto;
 import com.jordi.wolves.wolves_api.game.dto.AnswerResponseDto;
 import com.jordi.wolves.wolves_api.game.dto.GameDtoResponse;
+import com.jordi.wolves.wolves_api.game.dto.GameResultDto;
 import com.jordi.wolves.wolves_api.game.enums.GameStatus;
 import com.jordi.wolves.wolves_api.game.exception.GameAlreadyFinishedException;
 import com.jordi.wolves.wolves_api.game.exception.GameLastQuestionException;
@@ -457,6 +458,63 @@ class GameServiceTest {
         verify(gameRepository, never()).save(any(Game.class));
     }
 
+    @Test
+    void getResultReturnsPassedResultWhenScoreReachesThreshold() {
+        Game game = finishedGameWithScore(6);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        GameResultDto result = gameService.getResult("game-1");
+
+        assertEquals("game-1", result.gameId());
+        assertEquals(PLAYER_ID, result.playerId());
+        assertEquals(6, result.score());
+        assertEquals(2, result.totalQuestions());
+        assertTrue(result.passed());
+        assertEquals(1500, result.reward());
+        assertEquals(WolfMessages.FINAL_PASSED, result.finalMessage());
+    }
+
+    @Test
+    void getResultReturnsFailedResultWhenScoreIsBelowThreshold() {
+        Game game = finishedGameWithScore(5);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        GameResultDto result = gameService.getResult("game-1");
+
+        assertEquals("game-1", result.gameId());
+        assertEquals(PLAYER_ID, result.playerId());
+        assertEquals(5, result.score());
+        assertEquals(2, result.totalQuestions());
+        assertFalse(result.passed());
+        assertEquals(1500, result.reward());
+        assertEquals(WolfMessages.FINAL_FAILED, result.finalMessage());
+    }
+
+    @Test
+    void getResultThrowsWhenGameDoesNotExist() {
+        when(gameRepository.findById("missing-game")).thenReturn(Optional.empty());
+
+        GameNotFoundException exception = assertThrows(
+                GameNotFoundException.class,
+                () -> gameService.getResult("missing-game")
+        );
+
+        assertEquals("Game not found", exception.getMessage());
+    }
+
+    @Test
+    void getResultThrowsWhenGameIsNotFinished() {
+        Game game = existingGameWithStatus(GameStatus.IN_PROGRESS);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> gameService.getResult("game-1")
+        );
+
+        assertEquals("Game is not finished yet", exception.getMessage());
+    }
+
     private void prepareExistingGame(Game existingGame) {
         when(authentication.getName()).thenReturn(USERNAME);
         when(playerService.loadPlayerByName(USERNAME)).thenReturn(player);
@@ -483,6 +541,22 @@ class GameServiceTest {
         game.setStatus(GameStatus.IN_PROGRESS);
         game.setCurrentQuestionIndex(currentQuestionIndex);
         game.setAwaitingAnswer(true);
+        return game;
+    }
+
+    private Game finishedGameWithScore(int score) {
+        Game game = new Game(
+                PLAYER_ID,
+                Difficulty.EASY,
+                List.of(
+                        question("question-1", "Intro", "Primera pregunta", List.of("A", "B")),
+                        question("question-2", "Intro", "Segunda pregunta", List.of("A", "B"))
+                ),
+                1500
+        );
+        game.setId("game-1");
+        game.setScore(score);
+        game.setStatus(GameStatus.FINISHED);
         return game;
     }
 }
