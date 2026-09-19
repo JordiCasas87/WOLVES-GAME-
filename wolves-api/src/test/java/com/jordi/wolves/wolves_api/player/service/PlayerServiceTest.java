@@ -148,6 +148,90 @@ class PlayerServiceTest {
         verify(playerMapper).toRankingDto(secondPlayer);
     }
 
+    @Test
+    void loadPlayerReturnsPlayerWhenItExists() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(player));
+
+        Player result = playerService.loadPlayer(PLAYER_ID);
+
+        assertSame(player, result);
+    }
+
+    @Test
+    void loadPlayerThrowsWhenPlayerDoesNotExist() {
+        when(playerRepository.findById("missing-player")).thenReturn(Optional.empty());
+
+        PlayerNotFoundException exception = assertThrows(
+                PlayerNotFoundException.class,
+                () -> playerService.loadPlayer("missing-player")
+        );
+
+        assertEquals("Player not found", exception.getMessage());
+    }
+
+    @Test
+    void loadPlayerByNameReturnsPlayerWhenItExists() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        when(playerRepository.findByName(PLAYER_NAME)).thenReturn(Optional.of(player));
+
+        Player result = playerService.loadPlayerByName(PLAYER_NAME);
+
+        assertSame(player, result);
+    }
+
+    @Test
+    void loadPlayerByNameThrowsWhenPlayerDoesNotExist() {
+        when(playerRepository.findByName("missing-name")).thenReturn(Optional.empty());
+
+        PlayerNotFoundException exception = assertThrows(
+                PlayerNotFoundException.class,
+                () -> playerService.loadPlayerByName("missing-name")
+        );
+
+        assertEquals("Player not found", exception.getMessage());
+    }
+
+    @Test
+    void registerIncorrectQuestionAddsQuestionAndSavesPlayer() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+
+        playerService.registerIncorrectQuestion(player, "question-1");
+
+        assertEquals(List.of("question-1"), player.getIncorrectQuestionsIdList());
+        verify(playerRepository).save(player);
+    }
+
+    @Test
+    void applyGameResultIncrementsStatisticsAndRewardWhenPlayerPasses() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        player.setGamesPlayed(2);
+        player.setLevel(3);
+        player.setMoney(2500);
+
+        playerService.applyGameResult(player, 1500, true);
+
+        assertEquals(3, player.getGamesPlayed());
+        assertEquals(4, player.getLevel());
+        assertEquals(4000, player.getMoney());
+        verify(playerRepository).save(player);
+    }
+
+    @Test
+    void applyGameResultOnlyIncrementsGamesPlayedWhenPlayerFails() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        player.setGamesPlayed(2);
+        player.setLevel(3);
+        player.setMoney(2500);
+
+        playerService.applyGameResult(player, 1500, false);
+
+        assertEquals(3, player.getGamesPlayed());
+        assertEquals(3, player.getLevel());
+        assertEquals(2500, player.getMoney());
+        verify(playerRepository).save(player);
+    }
+
     private Player player(String id, String name, int age) {
         Player player = new Player(name, "encoded-password", Role.USER, age);
         player.setId(id);
