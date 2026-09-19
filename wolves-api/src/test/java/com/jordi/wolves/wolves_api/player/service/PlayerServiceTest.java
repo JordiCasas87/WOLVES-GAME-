@@ -2,6 +2,7 @@ package com.jordi.wolves.wolves_api.player.service;
 
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
+import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
 import com.jordi.wolves.wolves_api.player.enums.Role;
 import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
 import com.jordi.wolves.wolves_api.player.mapper.PlayerMapper;
@@ -20,6 +21,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -100,6 +103,49 @@ class PlayerServiceTest {
         assertEquals(List.of(firstResponse, secondResponse), result);
         verify(playerMapper).toDto(firstPlayer);
         verify(playerMapper).toDto(secondPlayer);
+    }
+
+    @Test
+    void deletePlayerByIdDeletesPlayerWhenItExists() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(player));
+
+        playerService.deletePlayerById(PLAYER_ID);
+
+        verify(playerRepository).delete(player);
+    }
+
+    @Test
+    void deletePlayerByIdThrowsWhenPlayerDoesNotExist() {
+        when(playerRepository.findById("missing-player")).thenReturn(Optional.empty());
+
+        PlayerNotFoundException exception = assertThrows(
+                PlayerNotFoundException.class,
+                () -> playerService.deletePlayerById("missing-player")
+        );
+
+        assertEquals("Player not found", exception.getMessage());
+        verify(playerRepository, never()).delete(any(Player.class));
+    }
+
+    @Test
+    void getRankingMapsRepositoryRankingInTheSameOrder() {
+        Player richestPlayer = player("player-1", "rich", 30);
+        richestPlayer.setMoney(5000);
+        Player secondPlayer = player("player-2", "second", 28);
+        secondPlayer.setMoney(2500);
+        PlayerRankingDto richestResponse = new PlayerRankingDto("player-1", "rich", 5000);
+        PlayerRankingDto secondResponse = new PlayerRankingDto("player-2", "second", 2500);
+        when(playerRepository.findAllByOrderByMoneyDesc())
+                .thenReturn(List.of(richestPlayer, secondPlayer));
+        when(playerMapper.toRankingDto(richestPlayer)).thenReturn(richestResponse);
+        when(playerMapper.toRankingDto(secondPlayer)).thenReturn(secondResponse);
+
+        List<PlayerRankingDto> result = playerService.getRanking();
+
+        assertEquals(List.of(richestResponse, secondResponse), result);
+        verify(playerMapper).toRankingDto(richestPlayer);
+        verify(playerMapper).toRankingDto(secondPlayer);
     }
 
     private Player player(String id, String name, int age) {
