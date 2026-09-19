@@ -150,6 +150,42 @@ It is responsible for:
 
 ---
 
+## 🧪 Testing strategy and later improvement
+
+The original academic delivery was completed within a three-week timeframe and
+prioritized the REST API, game logic, security and frontend integration. After
+reviewing the project, an automated backend test strategy was added as a later
+learning and quality-improvement phase.
+
+The suite follows the testing pyramid:
+
+- **Unit tests** form the base and cover services, business rules, JWT handling
+  and DTO mappers with JUnit 5 and Mockito.
+- **Web slice tests** cover controllers, request validation, JSON contracts,
+  HTTP status codes and exception translation with MockMvc.
+- **Security tests** verify JWT filtering and role-based endpoint authorization.
+- **Integration tests** exercise representative flows across the web, service,
+  mapper and repository boundaries while keeping external infrastructure
+  isolated.
+
+The tests were introduced incrementally by domain and behavior so that each
+change remains reviewable in the Git history. They can be run from the backend
+directory with:
+
+```bash
+cd wolves-api
+./mvnw test
+```
+
+At the time of this review, the backend suite contains **121 passing tests**
+across unit, web slice, security and integration levels.
+
+AI was used during this improvement phase as an assistant for documentation,
+technical consultation and learning. The implementation decisions, review and
+validation of the resulting test suite remain the author's responsibility.
+
+---
+
 ## 🚀 How to Run the Project Locally
 
 The project is split into **backend** and **frontend**, both included in this repository.
@@ -259,4 +295,3 @@ Some audiovisual assets and audio tracks are used as examples only and remain th
 
 © 2026 — Jordi Casas
 Academic project developed at IT Academy
-
