@@ -33,6 +33,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -513,6 +514,96 @@ class GameServiceTest {
         );
 
         assertEquals("Game is not finished yet", exception.getMessage());
+    }
+
+    @Test
+    void createGameWithMistakesCreatesGameFromIncorrectQuestions() {
+        List<String> incorrectQuestionIds = List.of(
+                "question-1", "question-2", "question-3", "question-4", "question-5",
+                "question-6", "question-7", "question-8", "question-9", "question-10"
+        );
+        List<Question> questions = incorrectQuestionIds.stream()
+                .map(id -> question(id, "Intro", "Pregunta", List.of("A", "B")))
+                .toList();
+        GameDtoResponse expectedResponse = new GameDtoResponse(
+                "mistakes-game-1",
+                PLAYER_ID,
+                null,
+                GameStatus.CREATED,
+                null
+        );
+        player.setIncorrectQuestionsIdList(incorrectQuestionIds);
+        when(authentication.getName()).thenReturn(USERNAME);
+        when(playerService.loadPlayerByName(USERNAME)).thenReturn(player);
+        when(gameRepository.findFirstByPlayerIdAndStatusIn(
+                PLAYER_ID,
+                List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
+        )).thenReturn(Optional.empty());
+        when(questionService.getRandomQuestionsByIds(incorrectQuestionIds, 10)).thenReturn(questions);
+        when(gameRepository.save(any(Game.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(gameMapper.toDto(any(Game.class))).thenReturn(expectedResponse);
+
+        GameDtoResponse result = gameService.createGameWithMistakes(authentication);
+
+        ArgumentCaptor<Game> gameCaptor = ArgumentCaptor.forClass(Game.class);
+        verify(gameRepository).save(gameCaptor.capture());
+        Game savedGame = gameCaptor.getValue();
+        assertSame(expectedResponse, result);
+        assertEquals(PLAYER_ID, savedGame.getPlayerId());
+        assertNull(savedGame.getDifficulty());
+        assertSame(questions, savedGame.getQuestions());
+        assertEquals(0, savedGame.getReward());
+        assertEquals(GameStatus.CREATED, savedGame.getStatus());
+        verify(questionService).getRandomQuestionsByIds(incorrectQuestionIds, 10);
+        verify(gameMapper).toDto(savedGame);
+    }
+
+    @Test
+    void createGameWithMistakesResumesExistingActiveGame() {
+        Game existingGame = existingGameWithStatus(GameStatus.IN_PROGRESS);
+        GameDtoResponse expectedResponse = new GameDtoResponse(
+                "game-1",
+                PLAYER_ID,
+                Difficulty.EASY,
+                GameStatus.IN_PROGRESS,
+                WolfMessages.RESUME_IN_PROGRESS
+        );
+        prepareExistingGame(existingGame);
+        when(gameMapper.toDto(existingGame, WolfMessages.RESUME_IN_PROGRESS)).thenReturn(expectedResponse);
+
+        GameDtoResponse result = gameService.createGameWithMistakes(authentication);
+
+        assertSame(expectedResponse, result);
+        verify(gameMapper).toDto(existingGame, WolfMessages.RESUME_IN_PROGRESS);
+        verify(questionService, never()).getRandomQuestionsByIds(any(), anyInt());
+        verify(gameRepository, never()).save(any(Game.class));
+    }
+
+    @Test
+    void createGameWithMistakesThrowsWhenPlayerHasFewerThanTenIncorrectQuestions() {
+        List<String> incorrectQuestionIds = List.of(
+                "question-1", "question-2", "question-3", "question-4", "question-5",
+                "question-6", "question-7", "question-8", "question-9"
+        );
+        player.setIncorrectQuestionsIdList(incorrectQuestionIds);
+        when(authentication.getName()).thenReturn(USERNAME);
+        when(playerService.loadPlayerByName(USERNAME)).thenReturn(player);
+        when(gameRepository.findFirstByPlayerIdAndStatusIn(
+                PLAYER_ID,
+                List.of(GameStatus.CREATED, GameStatus.IN_PROGRESS)
+        )).thenReturn(Optional.empty());
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> gameService.createGameWithMistakes(authentication)
+        );
+
+        assertEquals(
+                "Not enough incorrect questions to start a mistakes game",
+                exception.getMessage()
+        );
+        verify(questionService, never()).getRandomQuestionsByIds(any(), anyInt());
+        verify(gameRepository, never()).save(any(Game.class));
     }
 
     private void prepareExistingGame(Game existingGame) {
