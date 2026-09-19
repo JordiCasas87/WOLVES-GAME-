@@ -1,8 +1,12 @@
 package com.jordi.wolves.wolves_api.game.service;
 
+import com.jordi.wolves.wolves_api.game.dto.AnswerRequestDto;
+import com.jordi.wolves.wolves_api.game.dto.AnswerResponseDto;
 import com.jordi.wolves.wolves_api.game.dto.GameDtoResponse;
 import com.jordi.wolves.wolves_api.game.enums.GameStatus;
+import com.jordi.wolves.wolves_api.game.exception.GameAlreadyFinishedException;
 import com.jordi.wolves.wolves_api.game.exception.GameLastQuestionException;
+import com.jordi.wolves.wolves_api.game.exception.GameNoQuestionAsked;
 import com.jordi.wolves.wolves_api.game.exception.GameNotFoundException;
 import com.jordi.wolves.wolves_api.game.mapper.GameMapper;
 import com.jordi.wolves.wolves_api.game.model.Game;
@@ -32,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -280,6 +286,177 @@ class GameServiceTest {
         verify(gameRepository, never()).save(any(Game.class));
     }
 
+    @Test
+    void answerQuestionIncrementsScoreWhenAnswerIsCorrect() {
+        Question answeredQuestion = question(
+                "question-1",
+                "Introducción",
+                "Pregunta",
+                List.of("Correcta", "Incorrecta")
+        );
+        Game game = gameAwaitingAnswer(
+                List.of(
+                        answeredQuestion,
+                        question("question-2", "Introducción", "Otra pregunta", List.of("A", "B"))
+                ),
+                1
+        );
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        AnswerResponseDto result = gameService.answerQuestion("game-1", new AnswerRequestDto(0));
+
+        assertTrue(result.correct());
+        assertEquals(WolfMessages.ANSWER_CORRECT, result.wolfMessage());
+        assertEquals(1, game.getScore());
+        assertFalse(game.isAwaitingAnswer());
+        verify(gameRepository).save(game);
+        verify(playerService, never()).registerIncorrectQuestion(any(), any());
+        verify(playerService, never()).applyGameResult(any(), anyInt(), anyBoolean());
+    }
+
+    @Test
+    void answerQuestionRegistersQuestionWhenAnswerIsIncorrect() {
+        Question answeredQuestion = question(
+                "question-1",
+                "Introducción",
+                "Pregunta",
+                List.of("Correcta", "Incorrecta")
+        );
+        Game game = gameAwaitingAnswer(
+                List.of(
+                        answeredQuestion,
+                        question("question-2", "Introducción", "Otra pregunta", List.of("A", "B"))
+                ),
+                1
+        );
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+        when(playerService.loadPlayer(PLAYER_ID)).thenReturn(player);
+
+        AnswerResponseDto result = gameService.answerQuestion("game-1", new AnswerRequestDto(1));
+
+        assertFalse(result.correct());
+        assertEquals(WolfMessages.ANSWER_INCORRECT, result.wolfMessage());
+        assertEquals(0, game.getScore());
+        assertFalse(game.isAwaitingAnswer());
+        verify(playerService).registerIncorrectQuestion(player, "question-1");
+        verify(gameRepository).save(game);
+    }
+
+    @Test
+    void answerQuestionFinishesGameAndAppliesPassedResultAfterLastCorrectAnswer() {
+        Question lastQuestion = question(
+                "question-1",
+                "Introducción",
+                "Pregunta final",
+                List.of("Correcta", "Incorrecta")
+        );
+        Game game = gameAwaitingAnswer(List.of(lastQuestion), 1);
+        game.setScore(5);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+        when(playerService.loadPlayer(PLAYER_ID)).thenReturn(player);
+
+        AnswerResponseDto result = gameService.answerQuestion("game-1", new AnswerRequestDto(0));
+
+        assertTrue(result.correct());
+        assertEquals(6, game.getScore());
+        assertEquals(GameStatus.FINISHED, game.getStatus());
+        assertFalse(game.isAwaitingAnswer());
+        verify(playerService).applyGameResult(player, 1500, true);
+        verify(gameRepository).save(game);
+    }
+
+    @Test
+    void answerQuestionFinishesGameAndAppliesFailedResultAfterLastIncorrectAnswer() {
+        Question lastQuestion = question(
+                "question-1",
+                "Introducción",
+                "Pregunta final",
+                List.of("Correcta", "Incorrecta")
+        );
+        Game game = gameAwaitingAnswer(List.of(lastQuestion), 1);
+        game.setScore(5);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+        when(playerService.loadPlayer(PLAYER_ID)).thenReturn(player);
+
+        AnswerResponseDto result = gameService.answerQuestion("game-1", new AnswerRequestDto(1));
+
+        assertFalse(result.correct());
+        assertEquals(5, game.getScore());
+        assertEquals(GameStatus.FINISHED, game.getStatus());
+        assertFalse(game.isAwaitingAnswer());
+        verify(playerService).registerIncorrectQuestion(player, "question-1");
+        verify(playerService).applyGameResult(player, 1500, false);
+        verify(gameRepository).save(game);
+    }
+
+    @Test
+    void answerQuestionThrowsWhenGameDoesNotExist() {
+        when(gameRepository.findById("missing-game")).thenReturn(Optional.empty());
+
+        GameNotFoundException exception = assertThrows(
+                GameNotFoundException.class,
+                () -> gameService.answerQuestion("missing-game", new AnswerRequestDto(0))
+        );
+
+        assertEquals("Game Not Found!", exception.getMessage());
+        verify(gameRepository, never()).save(any(Game.class));
+    }
+
+    @Test
+    void answerQuestionThrowsWhenGameIsFinished() {
+        Game game = gameAwaitingAnswer(
+                List.of(question("question-1", "Intro", "Pregunta", List.of("A", "B"))),
+                1
+        );
+        game.setStatus(GameStatus.FINISHED);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        GameAlreadyFinishedException exception = assertThrows(
+                GameAlreadyFinishedException.class,
+                () -> gameService.answerQuestion("game-1", new AnswerRequestDto(0))
+        );
+
+        assertEquals("The game is already finished", exception.getMessage());
+        verify(gameRepository, never()).save(any(Game.class));
+    }
+
+    @Test
+    void answerQuestionThrowsWhenNoQuestionIsAwaitingAnswer() {
+        Game game = new Game(
+                PLAYER_ID,
+                Difficulty.EASY,
+                List.of(question("question-1", "Intro", "Pregunta", List.of("A", "B"))),
+                1500
+        );
+        game.setStatus(GameStatus.IN_PROGRESS);
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        GameNoQuestionAsked exception = assertThrows(
+                GameNoQuestionAsked.class,
+                () -> gameService.answerQuestion("game-1", new AnswerRequestDto(0))
+        );
+
+        assertEquals("No question to answer right now", exception.getMessage());
+        verify(gameRepository, never()).save(any(Game.class));
+    }
+
+    @Test
+    void answerQuestionThrowsWhenQuestionIndexHasNotAdvanced() {
+        Game game = gameAwaitingAnswer(
+                List.of(question("question-1", "Intro", "Pregunta", List.of("A", "B"))),
+                0
+        );
+        when(gameRepository.findById("game-1")).thenReturn(Optional.of(game));
+
+        GameNoQuestionAsked exception = assertThrows(
+                GameNoQuestionAsked.class,
+                () -> gameService.answerQuestion("game-1", new AnswerRequestDto(0))
+        );
+
+        assertEquals("No question has been asked yet", exception.getMessage());
+        verify(gameRepository, never()).save(any(Game.class));
+    }
+
     private void prepareExistingGame(Game existingGame) {
         when(authentication.getName()).thenReturn(USERNAME);
         when(playerService.loadPlayerByName(USERNAME)).thenReturn(player);
@@ -298,5 +475,14 @@ class GameServiceTest {
 
     private Question question(String id, String intro, String text, List<String> answers) {
         return new Question(id, intro, text, answers, 0, Difficulty.EASY);
+    }
+
+    private Game gameAwaitingAnswer(List<Question> questions, int currentQuestionIndex) {
+        Game game = new Game(PLAYER_ID, Difficulty.EASY, questions, 1500);
+        game.setId("game-1");
+        game.setStatus(GameStatus.IN_PROGRESS);
+        game.setCurrentQuestionIndex(currentQuestionIndex);
+        game.setAwaitingAnswer(true);
+        return game;
     }
 }
