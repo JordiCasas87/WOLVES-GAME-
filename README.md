@@ -150,39 +150,65 @@ It is responsible for:
 
 ---
 
-## 🧪 Testing strategy and later improvement
+## 🧪 Testing strategy and retrospective review
 
-The original academic delivery was completed within a three-week timeframe and
-prioritized the REST API, game logic, security and frontend integration. After
-reviewing the project, an automated backend test strategy was added as a later
-learning and quality-improvement phase.
+The minimum viable version of Wolves was originally completed as a three-week
+academic project. That delivery prioritized the REST API, game logic, security
+and connection with the frontend, and it did not include the level of automated
+test coverage that the backend deserved.
 
-The suite follows the testing pyramid:
+In **September 2026**, some time after closing that initial version, the project
+was revisited as a separate learning and quality-improvement exercise. This
+review followed several later projects and exercises through which new testing
+practices had been learned. Returning to Wolves made it possible to apply that
+knowledge to an existing application, assess earlier decisions honestly and
+turn the repository into a clearer academic example of a backend testing
+pyramid.
 
-- **Unit tests** form the base and cover services, business rules, JWT handling
-  and DTO mappers with JUnit 5 and Mockito.
+The work was developed incrementally and remains visible in the Git history:
+
+- `testing-pyramid` introduced the unit, mapper, controller, security and first
+  integration tests by domain and behavior.
+- `integration-tests` expanded representative flows across controllers,
+  services, mappers, security and repository boundaries.
+- `e2e-tests` completed the top of the pyramid with a deliberately small set of
+  critical backend journeys using the complete application and an isolated
+  MongoDB instance.
+
+The resulting pyramid is organized as follows:
+
+- **Unit tests** form the broad base and cover services, business rules, JWT
+  handling and DTO mappers with JUnit 5 and Mockito.
 - **Web slice tests** cover controllers, request validation, JSON contracts,
   HTTP status codes and exception translation with MockMvc.
 - **Security tests** verify JWT filtering and role-based endpoint authorization.
-- **Integration tests** exercise representative flows across the web, service,
-  mapper and repository boundaries while keeping external infrastructure
-  isolated.
+- **Integration tests** verify collaboration between the main application
+  layers while isolating external infrastructure where appropriate.
+- **End-to-end tests** start the backend on a real HTTP port and exercise JWT
+  security and persistence against MongoDB 7 through Testcontainers.
 
-The tests were introduced incrementally by domain and behavior so that each
-change remains reviewable in the Git history. They can be run from the backend
-directory with:
+This later review was not intended to disguise the scope of the original MVP.
+Its purpose was to document progress, correct an important omission and use a
+finished project to practise how a maintainable test package can be designed at
+an academic scale. The tests were added incrementally so that their evolution
+remains reviewable rather than appearing as a single unexplained change.
+
+At the end of this review, the backend suite contains **132 passing tests**
+across unit, mapper, web slice, security, integration and end-to-end levels.
+Docker must be running for the Testcontainers-based E2E tests.
+
+The complete suite can be run from the backend directory with:
 
 ```bash
 cd wolves-api
 ./mvnw test
 ```
 
-At the time of this review, the backend suite contains **121 passing tests**
-across unit, web slice, security and integration levels.
-
-AI was used during this improvement phase as an assistant for documentation,
-technical consultation and learning. The implementation decisions, review and
-validation of the resulting test suite remain the author's responsibility.
+Codex was used during this later phase as an AI assistant for planning,
+drafting and documenting parts of the test suite, as well as for technical
+consultation throughout the learning process. Every proposed test was reviewed,
+executed and validated by the author, who remains responsible for the testing
+strategy, implementation decisions and final result.
 
 ---
 
@@ -198,20 +224,20 @@ The project is split into **backend** and **frontend**, both included in this re
 - Java 21
 - Maven
 - MongoDB running locally
+- Docker running when executing the E2E test suite
 
 From the backend root folder:
 
 ```bash
 cd wolves-api
 mvn spring-boot:run
+```
 
 The backend will start on:
-http://localhost:8080
+`http://localhost:8080`
 
 Swagger UI:
-http://localhost:8080/swagger-ui.html
-
-```
+`http://localhost:8080/swagger-ui.html`
 
 
 ### 2️⃣ Frontend (React + Vite)
