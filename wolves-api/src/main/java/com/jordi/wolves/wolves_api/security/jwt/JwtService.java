@@ -1,6 +1,7 @@
 package com.jordi.wolves.wolves_api.security.jwt;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -20,8 +21,11 @@ import java.util.function.Function;
     @Service
     public class JwtService {
 
-        // Cambia esto por una cadena larga y aleatoria en producción
-        private static final String SECRET_KEY = "32452D5367566B59703373367639792F423F4528482B4D6251655468576D5A71";
+        private final String secretKey;
+
+        public JwtService(@Value("${jwt.secret}") String secretKey) {
+            this.secretKey = secretKey;
+        }
 
         public String extractUsername(String token) {
             return extractClaim(token, Claims::getSubject);
@@ -70,8 +74,7 @@ import java.util.function.Function;
         }
 
         private Key getSignInKey() {
-            byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+            byte[] keyBytes = Decoders.BASE64.decode(secretKey);
             return Keys.hmacShaKeyFor(keyBytes);
         }
     }
-

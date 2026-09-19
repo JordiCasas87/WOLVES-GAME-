@@ -15,12 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class JwtServiceTest {
 
+    private static final String TEST_SECRET =
+            "VGhpc0lzQVRlc3RPbmx5U2VjcmV0S2V5VGhhdElzTG9uZ0Vub3VnaEZvckhTMjU2";
+
     private JwtService jwtService;
     private Player player;
 
     @BeforeEach
     void setUp() {
-        jwtService = new JwtService();
+        jwtService = new JwtService(TEST_SECRET);
         player = new Player("jordi", "encoded-password", Role.USER, 30);
     }
 
