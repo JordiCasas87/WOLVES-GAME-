@@ -212,6 +212,32 @@ strategy, implementation decisions and final result.
 
 ---
 
+## 📌 Known technical debt
+
+Wolves remains an academic MVP rather than a production-ready service. The
+following limitations are known and have been left as possible future work if
+the application continues to evolve:
+
+- Enforce ownership checks on every game operation so that an authenticated
+  player can only read or modify their own games.
+- Add rate limiting to authentication endpoints and strengthen request
+  validation for registration, login and user-provided content.
+- Introduce a more complete JWT lifecycle with shorter-lived access tokens,
+  refresh tokens and an explicit revocation strategy.
+- Add continuous integration to run the test suite and automated dependency
+  security checks on every relevant change.
+- Add structured observability and performance testing to evaluate the service
+  under realistic operational conditions.
+
+These points are documented deliberately rather than presented as completed
+features. The original project fulfilled the scope of a three-week final course
+assignment, and the later reviews reflect an ongoing student learning process:
+revisiting earlier work, applying knowledge gained through subsequent exercises
+and identifying the next engineering decisions that a real evolution of the
+application would require.
+
+---
+
 ## 🚀 How to Run the Project Locally
 
 The project is split into **backend** and **frontend**, both included in this repository.
