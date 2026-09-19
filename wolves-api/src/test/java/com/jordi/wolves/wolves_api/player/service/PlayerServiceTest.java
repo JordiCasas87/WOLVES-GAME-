@@ -1,7 +1,9 @@
 package com.jordi.wolves.wolves_api.player.service;
 
+import com.jordi.wolves.wolves_api.player.dto.PlayerAdminUpdateDto;
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoRequest;
 import com.jordi.wolves.wolves_api.player.dto.PlayerDtoResponse;
+import com.jordi.wolves.wolves_api.player.dto.PlayerMeDto;
 import com.jordi.wolves.wolves_api.player.dto.PlayerRankingDto;
 import com.jordi.wolves.wolves_api.player.enums.Role;
 import com.jordi.wolves.wolves_api.player.exception.PlayerNotFoundException;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,6 +40,9 @@ class PlayerServiceTest {
 
     @Mock
     private PlayerMapper playerMapper;
+
+    @Mock
+    private Authentication authentication;
 
     private PlayerService playerService;
 
@@ -232,6 +238,140 @@ class PlayerServiceTest {
         verify(playerRepository).save(player);
     }
 
+    @Test
+    void getMeLoadsAndMapsAuthenticatedPlayer() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        PlayerMeDto expectedResponse = meResponseFor(player);
+        when(authentication.getName()).thenReturn(PLAYER_NAME);
+        when(playerRepository.findByName(PLAYER_NAME)).thenReturn(Optional.of(player));
+        when(playerMapper.toMeDto(player)).thenReturn(expectedResponse);
+
+        PlayerMeDto result = playerService.getMe(authentication);
+
+        assertSame(expectedResponse, result);
+        verify(playerRepository).findByName(PLAYER_NAME);
+        verify(playerMapper).toMeDto(player);
+    }
+
+    @Test
+    void updateByAdminUpdatesEveryProvidedField() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        PlayerAdminUpdateDto request = new PlayerAdminUpdateDto(
+                "updated-name",
+                35,
+                4,
+                Role.ADMIN,
+                5000
+        );
+        PlayerDtoResponse expectedResponse = new PlayerDtoResponse(
+                PLAYER_ID,
+                "updated-name",
+                35,
+                player.getDateOfCreation(),
+                4,
+                5000,
+                player.getIncorrectQuestionsIdList(),
+                Role.ADMIN
+        );
+        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(player));
+        when(playerRepository.save(player)).thenReturn(player);
+        when(playerMapper.toDto(player)).thenReturn(expectedResponse);
+
+        PlayerDtoResponse result = playerService.updateByAdmin(PLAYER_ID, request);
+
+        assertSame(expectedResponse, result);
+        assertEquals("updated-name", player.getName());
+        assertEquals(35, player.getAge());
+        assertEquals(4, player.getLevel());
+        assertEquals(5000, player.getMoney());
+        assertEquals(Role.ADMIN, player.getRole());
+        verify(playerRepository).save(player);
+    }
+
+    @Test
+    void updateByAdminPreservesFieldsThatAreNotProvided() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        player.setLevel(2);
+        player.setMoney(1500);
+        PlayerAdminUpdateDto request = new PlayerAdminUpdateDto(
+                null,
+                31,
+                null,
+                null,
+                null
+        );
+        PlayerDtoResponse expectedResponse = new PlayerDtoResponse(
+                PLAYER_ID,
+                PLAYER_NAME,
+                31,
+                player.getDateOfCreation(),
+                2,
+                1500,
+                player.getIncorrectQuestionsIdList(),
+                Role.USER
+        );
+        when(playerRepository.findById(PLAYER_ID)).thenReturn(Optional.of(player));
+        when(playerRepository.save(player)).thenReturn(player);
+        when(playerMapper.toDto(player)).thenReturn(expectedResponse);
+
+        PlayerDtoResponse result = playerService.updateByAdmin(PLAYER_ID, request);
+
+        assertSame(expectedResponse, result);
+        assertEquals(PLAYER_NAME, player.getName());
+        assertEquals(31, player.getAge());
+        assertEquals(2, player.getLevel());
+        assertEquals(1500, player.getMoney());
+        assertEquals(Role.USER, player.getRole());
+        verify(playerRepository).save(player);
+    }
+
+    @Test
+    void updateByAdminThrowsWhenPlayerDoesNotExist() {
+        PlayerAdminUpdateDto request = new PlayerAdminUpdateDto(
+                "updated-name",
+                null,
+                null,
+                null,
+                null
+        );
+        when(playerRepository.findById("missing-player")).thenReturn(Optional.empty());
+
+        PlayerNotFoundException exception = assertThrows(
+                PlayerNotFoundException.class,
+                () -> playerService.updateByAdmin("missing-player", request)
+        );
+
+        assertEquals("Player not found", exception.getMessage());
+        verify(playerRepository, never()).save(any(Player.class));
+    }
+
+    @Test
+    void updateMyNotesUpdatesSavesAndMapsAuthenticatedPlayer() {
+        Player player = player(PLAYER_ID, PLAYER_NAME, 30);
+        PlayerMeDto expectedResponse = new PlayerMeDto(
+                PLAYER_ID,
+                PLAYER_NAME,
+                Role.USER.name(),
+                0,
+                0,
+                0,
+                "Repasar Spring Security"
+        );
+        when(authentication.getName()).thenReturn(PLAYER_NAME);
+        when(playerRepository.findByName(PLAYER_NAME)).thenReturn(Optional.of(player));
+        when(playerMapper.toMeDto(player)).thenReturn(expectedResponse);
+
+        PlayerMeDto result = playerService.updateMyNotes(
+                authentication,
+                "Repasar Spring Security"
+        );
+
+        assertSame(expectedResponse, result);
+        assertEquals("Repasar Spring Security", player.getNotes());
+        verify(playerRepository).save(player);
+        verify(playerMapper).toMeDto(player);
+    }
+
     private Player player(String id, String name, int age) {
         Player player = new Player(name, "encoded-password", Role.USER, age);
         player.setId(id);
@@ -248,6 +388,18 @@ class PlayerServiceTest {
                 player.getMoney(),
                 player.getIncorrectQuestionsIdList(),
                 player.getRole()
+        );
+    }
+
+    private PlayerMeDto meResponseFor(Player player) {
+        return new PlayerMeDto(
+                player.getId(),
+                player.getName(),
+                player.getRole().name(),
+                player.getMoney(),
+                player.getGamesPlayed(),
+                player.getLevel(),
+                player.getNotes()
         );
     }
 }
